@@ -5,6 +5,7 @@ import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.Role;
 import com.dame.cn.beans.entities.RolePermission;
 import com.dame.cn.beans.response.PageResult;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -78,6 +77,7 @@ public class RoleController {
     @PostMapping(value = "/save")
     public Result add(@RequestBody Role role) {
         role.setId(String.valueOf(idWorker.nextId()));
+        role.setCreator(LoginUserContext.getCurrentUser().getUsername());
         roleService.save(role);
         return Result.SUCCESS();
     }
@@ -88,6 +88,7 @@ public class RoleController {
     @PutMapping(value = "/update/{id}")
     public Result update(@PathVariable(name = "id") String id, @RequestBody Role role) {
         role.setId(id);
+        role.setEditor(LoginUserContext.getCurrentUser().getUsername());
         roleService.updateById(role);
         return Result.SUCCESS();
     }

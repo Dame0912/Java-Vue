@@ -4,6 +4,7 @@ package com.dame.cn.controller.pe;
 import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.User;
 import com.dame.cn.beans.entities.UserRole;
 import com.dame.cn.beans.response.PageResult;
@@ -13,7 +14,6 @@ import com.dame.cn.service.pe.UserRoleService;
 import com.dame.cn.service.pe.UserService;
 import com.dame.cn.utils.IdWorker;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,13 +45,12 @@ public class UserController {
 
 
     /**
-     * 查询员工集合
+     * 分页查询员工集合
      */
     @GetMapping(value = "/list")
-    public Result findAll(@RequestParam Map<String, Object> map,
+    public Result findAllPage(@RequestParam Map<String, Object> map,
                           @RequestParam(name = "page", defaultValue = "1") int page,
                           @RequestParam(name = "size", defaultValue = "10") int size) {
-        log.info("map:{}, page:{}, size:{}", map, page, size);
         IPage<User> userIPage = userService.findAll(map, page, size);
         PageResult<User> pageResult = new PageResult<>(userIPage.getTotal(), userIPage.getRecords());
         return new Result(ResultCode.SUCCESS, pageResult);
@@ -74,6 +73,7 @@ public class UserController {
     public Result save(@RequestBody User user) {
         //user.setLevel("user");
         user.setId(String.valueOf(idWorker.nextId()));
+        user.setCreator(LoginUserContext.getCurrentUser().getUsername());
 
         // 密码处理 todo
 
@@ -87,6 +87,8 @@ public class UserController {
     @PutMapping(value = "/update/{id}")
     public Result update(@PathVariable("id") String id, @RequestBody User user) {
         user.setId(id);
+        user.setEditor(LoginUserContext.getCurrentUser().getUsername());
+        user.setPassword(null);
         // 密码处理
         userService.updateById(user);
         return new Result(ResultCode.SUCCESS);
@@ -128,6 +130,14 @@ public class UserController {
         userRoleService.remove(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, userId));
         userRoleService.saveBatch(userRoles);
         return new Result(ResultCode.SUCCESS);
+    }
+
+    /**
+     * 查询全部员工
+     */
+    @GetMapping(value = "/all")
+    public Result getAllUser(){
+        return new Result(ResultCode.SUCCESS, userService.list());
     }
 
 }

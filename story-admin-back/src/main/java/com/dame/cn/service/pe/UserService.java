@@ -30,9 +30,8 @@ public interface UserService extends IService<User> {
 
     /**
      * 获取用户基本信息，以及权限信息（菜单，按钮）
-     * @param token token
      * @return 基本信息封装
      */
-    ProfileResult getUserProfile(String token);
+    ProfileResult getUserProfile();
 
 }

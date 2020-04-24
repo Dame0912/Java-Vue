@@ -3,21 +3,18 @@ package com.dame.cn.controller.pe;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
+import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.User;
 import com.dame.cn.beans.response.BizException;
 import com.dame.cn.beans.response.Result;
 import com.dame.cn.beans.response.ResultCode;
 import com.dame.cn.beans.vo.ProfileResult;
-import com.dame.cn.config.shiro.JwtUtil;
 import com.dame.cn.service.pe.UserService;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -55,23 +52,13 @@ public class LoginController {
      * 前后端约定：前端请求微服务时需要添加头信息Authorization ,内容为Bearer+空格+token
      */
     @PostMapping("/login/info")
-    public Result profile(HttpServletRequest request) {
-        String authorization = request.getHeader("Authorization");
-        if (StringUtils.isEmpty(authorization)) {
-            throw new BizException(ResultCode.UNAUTHENTICATED);
-        }
-        String token = authorization.replace("Bearer ", "");
-        ProfileResult profileResult = userService.getUserProfile(token);
+    public Result profile() {
+        ProfileResult profileResult = userService.getUserProfile();
         return new Result(ResultCode.SUCCESS, profileResult);
     }
 
     @PostMapping("/logout")
-    public Result logout(HttpServletRequest request) {
-        String authorization = request.getHeader("Authorization");
-        if (StringUtils.isEmpty(authorization)) {
-            throw new BizException(ResultCode.UNAUTHENTICATED);
-        }
-        String token = authorization.replace("Bearer ", "");
+    public Result logout() {
         return new Result(ResultCode.SUCCESS);
     }
 
@@ -79,14 +66,8 @@ public class LoginController {
      * 获取个人信息
      */
     @PostMapping(value = "/profile")
-    public Result getProfileInfo(HttpServletRequest request) {
-        String authorization = request.getHeader("Authorization");
-        if (StringUtils.isEmpty(authorization)) {
-            throw new BizException(ResultCode.UNAUTHENTICATED);
-        }
-        String token = authorization.replace("Bearer ", "");
-        Claims claims = JwtUtil.parseJwt(token);
-        String userId = claims.getId();
+    public Result getProfileInfo() {
+        String userId = LoginUserContext.getCurrentUser().getUserId();
         User user = userService.getById(userId);
         user.setPassword("******");
         Map<String, Object> beanMap = BeanUtil.beanToMap(user);
@@ -98,20 +79,15 @@ public class LoginController {
      * 修改密码
      */
     @PutMapping(value = "/edit/pwd")
-    public Result editPassWord(HttpServletRequest request, @RequestBody Map<String, Object> map) {
-        String authorization = request.getHeader("Authorization");
-        if (StringUtils.isEmpty(authorization)) {
-            throw new BizException(ResultCode.UNAUTHENTICATED);
-        }
-        String token = authorization.replace("Bearer ", "");
-        Claims claims = JwtUtil.parseJwt(token);
-        String userId = claims.getId();
+    public Result editPassWord(@RequestBody Map<String, Object> map) {
+        String userId = LoginUserContext.getCurrentUser().getUserId();
         // 原密码
         User user = userService.getById(userId);
         if(null == user || !user.getPassword().equals(MapUtil.get(map,"originPwd",String.class))){
             throw new BizException(ResultCode.PWD_ERROR);
         }
         user.setPassword(MapUtil.get(map,"newPwd",String.class));
+        user.setLastPwdModifiedTime(new Date());
         userService.updateById(user);
         // 新密码
         return new Result(ResultCode.SUCCESS);

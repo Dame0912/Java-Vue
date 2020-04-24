@@ -1,4 +1,4 @@
-package com.dame.cn.config.shiro;
+package com.dame.cn.config.jwt;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

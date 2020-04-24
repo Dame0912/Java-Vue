@@ -1,4 +1,4 @@
-package com.dame.cn.config.shiro;
+package com.dame.cn.config.jwt;
 
 import cn.hutool.core.map.MapUtil;
 import com.alibaba.fastjson.JSON;

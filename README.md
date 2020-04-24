@@ -92,11 +92,15 @@
 
 ##### ④采用的技术
 
-	* springboot
-	* mybatis plus
-	* druid（含控制台）
-	* logback-spring
-	* jwt
+```java
+* springboot
+* mybatis plus
+* druid（含控制台）
+* logback-spring
+* jwt
+* filter
+* ThreadLocal
+```
 
 
 

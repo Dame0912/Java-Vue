@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.Permission;
 import com.dame.cn.beans.entities.RolePermission;
 import com.dame.cn.beans.response.Result;
@@ -105,6 +106,7 @@ public class PermissionController {
     public Result save(@RequestBody Permission permission) throws Exception {
         //设置主键的值
         permission.setId(String.valueOf(idWorker.nextId()));
+        permission.setCreator(LoginUserContext.getCurrentUser().getUsername());
         //3.保存
         permissionService.save(permission);
         return new Result(ResultCode.SUCCESS);
@@ -116,6 +118,7 @@ public class PermissionController {
     @PutMapping(value = "/update/{id}")
     public Result update(@PathVariable(value = "id") String id, @RequestBody Permission permission) throws Exception {
         permission.setId(id);
+        permission.setEditor(LoginUserContext.getCurrentUser().getUsername());
         //3.保存
         permissionService.updateById(permission);
         return new Result(ResultCode.SUCCESS);
