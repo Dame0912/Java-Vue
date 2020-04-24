@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -30,11 +29,9 @@ public class LoginUserContextFilter implements Filter {
 
     }
 
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        handleCross(response);
         if (httpServletRequest.getRequestURI().equals("/sys/user/login")) {
             chain.doFilter(request, response);
         } else {
@@ -67,15 +64,6 @@ public class LoginUserContextFilter implements Filter {
             }
         }
 
-    }
-
-    // 处理跨域，因为filter在controller之前，所以@CrossOrigin在这不会起作用
-    private void handleCross(ServletResponse response) {
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", "*");
-        httpServletResponse.setHeader("Access-Control-Allow-Methods", "*");
-        httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
-        httpServletResponse.addHeader("Access-Control-Allow-Origin", "*");
     }
 
     @Override

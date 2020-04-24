@@ -96,10 +96,7 @@
       DeptInfo
     },
     created() {
-      this.deptList()
-      setTimeout(()=>{
-        this.getAllUser()
-      },2000)
+      this.getBaseData()
     },
     methods: {
       deptList() {
@@ -141,9 +138,16 @@
           })
         })
       },
-      getAllUser(){
-        getAll().then(res=>{
-          this.$refs.deptRef.users = res.data
+      getBaseData(){
+        this.listLoading = true
+        organList().then(response => {
+          this.companyWithDept = response.data
+          this.deptCategory = this.companyWithDept.deptCategory
+          getAll().then(res=>{
+            this.$refs.deptRef.users = res.data
+            this.listLoading = false
+          })
+
         })
       }
     }

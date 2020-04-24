@@ -170,8 +170,7 @@
       }
     },
     created() {
-      this.fetchData()
-      this.deptList()
+      this.getBaseData()
     },
     methods: {
       checkPoint(point){
@@ -250,6 +249,17 @@
       deptList() {
         organList().then(response => {
           this.deptCategory = response.data.deptCategory
+        })
+      },
+      getBaseData(){
+        this.listLoading = true
+        UserApi.findAllPage(this.listQuery).then(res => {
+          this.total = res.data.total
+          this.dataList = res.data.rows
+          organList().then(response => {
+            this.deptCategory = response.data.deptCategory
+            this.listLoading = false
+          })
         })
       },
       handleNodeClick(data) {
