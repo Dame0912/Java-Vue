@@ -20,7 +20,7 @@
     </appender>
 
 
-    <logger name="com.dame.cn" level="DEBUG"/>
+    <logger name="com.dame.cn" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

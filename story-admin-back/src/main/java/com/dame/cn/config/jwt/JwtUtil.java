@@ -1,9 +1,7 @@
-package com.dame.cn.config.shiro;
+package com.dame.cn.config.jwt;
 
 import cn.hutool.core.map.MapUtil;
 import com.alibaba.fastjson.JSON;
-import com.dame.cn.beans.response.BizException;
-import com.dame.cn.beans.response.ResultCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -67,11 +65,7 @@ public class JwtUtil {
      * 解析token字符串获取clamis
      */
     public static Claims parseJwt(String token) {
-        try {
-            return Jwts.parser().setSigningKey(jwtUtil.jwtProperties.getSecretKey()).parseClaimsJws(token).getBody();
-        } catch (Exception e) {
-            throw new BizException(ResultCode.UNAUTH_EXPIRE);
-        }
+        return Jwts.parser().setSigningKey(jwtUtil.jwtProperties.getSecretKey()).parseClaimsJws(token).getBody();
     }
 
     /**

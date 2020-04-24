@@ -1,12 +1,10 @@
 package com.dame.cn.beans.vo;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.map.MapUtil;
 import com.dame.cn.beans.entities.Permission;
 import com.dame.cn.beans.entities.User;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 

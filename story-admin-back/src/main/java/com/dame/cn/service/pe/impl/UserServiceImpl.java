@@ -3,23 +3,25 @@ package com.dame.cn.service.pe.impl;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dame.cn.beans.entities.Permission;
+import com.dame.cn.beans.entities.Role;
 import com.dame.cn.beans.entities.User;
 import com.dame.cn.beans.response.BizException;
 import com.dame.cn.beans.response.ResultCode;
 import com.dame.cn.beans.vo.ProfileResult;
-import com.dame.cn.config.shiro.JwtUtil;
+import com.dame.cn.config.jwt.JwtUtil;
+import com.dame.cn.config.shiro.JwtAuthenticationToken;
 import com.dame.cn.mapper.UserMapper;
 import com.dame.cn.service.pe.UserRoleService;
 import com.dame.cn.service.pe.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,10 +81,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<User>().eq(User::getMobile, mobile);
         User user = userService.getOne(wrapper);
         if (null == user || !user.getPassword().equals(password)) {
-            throw new BizException(ResultCode.MOBILEORPASSWORDERROR);
+            throw new BizException(ResultCode.MOBILE_OR_PASSWORD_ERROR);
         } else {
             //登录成功
             String token = JwtUtil.createJwt(user.getId(), user.getUsername(), null);
+            SecurityUtils.getSubject().login(new JwtAuthenticationToken(token));
             return token;
         }
     }
@@ -98,6 +101,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         } catch (ExpiredJwtException e) {
             throw new BizException(ResultCode.UNAUTH_EXPIRE);
         }
+    }
+
+    @Override
+    public List<Role> findRolesByUserId(String userId) {
+        return baseMapper.getUserRoles(userId);
+    }
+
+    @Override
+    public List<Permission> findPermsByUserId(String userId) {
+        return baseMapper.getUserPerms(userId);
     }
 
 }

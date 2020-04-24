@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import {MessageBox, Message} from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import {getToken} from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
@@ -36,7 +36,7 @@ service.interceptors.response.use(
   /**
    * If you want to get http information such as headers or status
    * Please return  response => response
-  */
+   */
 
   /**
    * Determine the request status by custom code
@@ -55,7 +55,7 @@ service.interceptors.response.use(
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 10004 || res.code === 10002 || res.code === 50014) {
+      if (res.code === 20001 || res.code === 20002 || res.code === 20003 || res.code === 20004) {
         // to re-login
         // MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
         //   confirmButtonText: 'Re-Login',
@@ -66,10 +66,12 @@ service.interceptors.response.use(
         //     location.reload()
         //   })
         // })
-
+        setTimeout(() => {
           store.dispatch('user/resetToken').then(() => {
             location.reload()
           })
+        }, 1500)
+
       }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
@@ -77,12 +79,28 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    console.log('err：' + error) // for debug
+
+    // 上面只能接收 http 状态码为200的请求，如果要获取别的状态码，可以这样处理。
+    // 这里没处理，是因为后端 权限不足的 401，已经转换为200，然后根据res.code的自定义状态码进行判断
+    // if (error.response && error.response.status === 401) {
+    //   Message({
+    //     message: error.response.data.message,
+    //     type: 'error',
+    //     duration: 5 * 1000
+    //   })
+    //   setTimeout(() => {
+    //     store.dispatch('user/resetToken').then(() => {
+    //       location.reload()
+    //     })
+    //   }, 1500)
+    // } else {
+      Message({
+        message: error.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    // }
     return Promise.reject(error)
   }
 )

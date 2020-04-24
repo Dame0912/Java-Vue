@@ -9,10 +9,34 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:           #密码（默认为空）
+    database: 10        #Redis索引0~15，默认为0
+
+
 
 jwt:
   config:
     token-expire-time: 1
     secret-key: story-admin
+
+
+#配置shiro拦截器链
+shiro:
+  filter:
+    chain:
+      perms:
+        - path: /
+          filter: anon
+        - path: /sys/user/login
+          filter: anon
+        - path: /webjars/**
+          filter: anon
+        - path: /druid/**
+          filter: anon
+        - path: /**
+          filter: jwt
 
 

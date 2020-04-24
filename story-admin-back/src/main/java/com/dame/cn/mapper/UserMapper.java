@@ -2,6 +2,7 @@ package com.dame.cn.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dame.cn.beans.entities.Permission;
+import com.dame.cn.beans.entities.Role;
 import com.dame.cn.beans.entities.User;
 
 import java.util.List;
@@ -20,4 +21,9 @@ public interface UserMapper extends BaseMapper<User> {
      * 查询用户 权限 列表
      */
     List<Permission> getUserPerms(String userId);
+
+    /**
+     * 查询用户 角色 列表
+     */
+    List<Role> getUserRoles(String userId);
 }

@@ -23,6 +23,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -46,6 +47,15 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.version}</version>
         </dependency>
+
+        <!-- redis配置 -->
+
+        <!--<dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>5.2.2.RELEASE</version>
+        </dependency>-->
+        <!-- redis配置  结束-->
 
         <!--shiro与spring整合 -->
         <dependency>
@@ -98,7 +108,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-
         <!--mybatis的代码自动生成依赖，开始，默认用到了velocity -->
         <!--<dependency>
             <groupId>com.baomidou</groupId>

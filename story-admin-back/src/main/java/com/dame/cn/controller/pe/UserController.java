@@ -13,7 +13,7 @@ import com.dame.cn.service.pe.UserRoleService;
 import com.dame.cn.service.pe.UserService;
 import com.dame.cn.utils.IdWorker;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,11 +47,11 @@ public class UserController {
     /**
      * 查询员工集合
      */
+    @RequiresPermissions(value = {"settings-user-findall"})
     @GetMapping(value = "/list")
     public Result findAll(@RequestParam Map<String, Object> map,
                           @RequestParam(name = "page", defaultValue = "1") int page,
                           @RequestParam(name = "size", defaultValue = "10") int size) {
-        log.info("map:{}, page:{}, size:{}", map, page, size);
         IPage<User> userIPage = userService.findAll(map, page, size);
         PageResult<User> pageResult = new PageResult<>(userIPage.getTotal(), userIPage.getRecords());
         return new Result(ResultCode.SUCCESS, pageResult);
@@ -60,6 +60,7 @@ public class UserController {
     /**
      * 根据ID查询user
      */
+    @RequiresPermissions(value = {"settings-user-findById"})
     @GetMapping(value = "/find/{id}")
     public Result findById(@PathVariable("id") String id) {
         User user = userService.getById(id);
@@ -70,6 +71,7 @@ public class UserController {
     /**
      * 保存user
      */
+    @RequiresPermissions(value = {"settings-user-save"})
     @PostMapping(value = "/save")
     public Result save(@RequestBody User user) {
         //user.setLevel("user");
@@ -84,6 +86,7 @@ public class UserController {
     /**
      * 修改User
      */
+    @RequiresPermissions(value = {"settings-user-update"})
     @PutMapping(value = "/update/{id}")
     public Result update(@PathVariable("id") String id, @RequestBody User user) {
         user.setId(id);
@@ -95,6 +98,7 @@ public class UserController {
     /**
      * 根据id删除
      */
+    @RequiresPermissions(value = {"settings-user-remove"})
     @DeleteMapping(value = "/delete/{id}")
     public Result delete(@PathVariable(value = "id") String id) {
         userService.removeById(id);
@@ -104,6 +108,7 @@ public class UserController {
     /**
      * 根据用户Id查询角色
      */
+    @RequiresPermissions(value = {"settings-user-findUserRole"})
     @GetMapping(value = "/role/{id}")
     public Result findUserRole(@PathVariable("id") String userId) {
         LambdaQueryWrapper<UserRole> wrapper = new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, userId);
@@ -114,6 +119,7 @@ public class UserController {
     /**
      * 给用户分配角色
      */
+    @RequiresPermissions(value = {"settings-user-assignRoles"})
     @PutMapping(value = "/assign/roles")
     public Result assign(@RequestBody Map<String, Object> map) {
         //1.获取被分配的用户id

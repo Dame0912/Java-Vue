@@ -32,4 +32,11 @@
         WHERE u.id = #{userId}
     </select>
 
+    <select id="getUserRoles" parameterType="java.lang.String" resultType="com.dame.cn.beans.entities.Role">
+        SELECT r.* FROM co_user u
+        LEFT JOIN pe_user_role ur ON u.id = ur.user_id
+        LEFT JOIN pe_role r ON r.id = ur.role_id
+        WHERE u.id = #{userId}
+    </select>
+
 </mapper>

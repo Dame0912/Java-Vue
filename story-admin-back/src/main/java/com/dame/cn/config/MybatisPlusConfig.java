@@ -25,7 +25,7 @@ public class MybatisPlusConfig {
      * 性能分析拦截器，用于输出每条 SQL 语句及其执行时间
      * SQL 执行性能分析，开发环境使用，线上不推荐。
      */
-    @Bean
+    //@Bean
     //@Profile({"dev","test"})// 设置 dev test 环境开启
     public PerformanceInterceptor performanceInterceptor() {
         PerformanceInterceptor performanceInterceptor = new PerformanceInterceptor();

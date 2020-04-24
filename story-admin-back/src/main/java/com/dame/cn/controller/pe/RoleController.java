@@ -13,14 +13,13 @@ import com.dame.cn.beans.response.ResultCode;
 import com.dame.cn.service.pe.RolePermissionService;
 import com.dame.cn.service.pe.RoleService;
 import com.dame.cn.utils.IdWorker;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * <p>
