@@ -1,6 +1,6 @@
 package com.dame.cn.config;
 
-import com.dame.cn.config.web.filter.LoginUserContextFilter;
+import com.dame.cn.config.web.filter.JwtTokenFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,9 +38,9 @@ public class WebConfig implements WebMvcConfigurer {
      * 注册过滤器
      */
     @Bean
-    public FilterRegistrationBean loginUserContextFilter() {
+    public FilterRegistrationBean jwtTokenFilter() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        filterRegistrationBean.setFilter(new LoginUserContextFilter());
+        filterRegistrationBean.setFilter(new JwtTokenFilter());
         filterRegistrationBean.addUrlPatterns("/*");
         filterRegistrationBean.setOrder(1);
         return filterRegistrationBean;

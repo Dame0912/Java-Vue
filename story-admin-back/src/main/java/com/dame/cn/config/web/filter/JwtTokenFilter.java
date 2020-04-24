@@ -18,11 +18,11 @@ import java.io.PrintWriter;
 
 /**
  * @author LYQ
- * @description 保存登陆人信息至 ThreadLocal
+ * @description 验证Token，并保存登陆人信息至 ThreadLocal
  * @since 2020/4/24 11:06
  **/
 @Slf4j
-public class LoginUserContextFilter implements Filter {
+public class JwtTokenFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
