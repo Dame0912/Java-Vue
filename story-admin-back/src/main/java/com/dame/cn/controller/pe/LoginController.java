@@ -61,14 +61,18 @@ public class LoginController {
     }
 
     /**
-     * 用户登出。
-     * 没有直接在拦截时使用自带的logout过滤器，因为默认登出会跳转到自定义或默认("/")的URL中，这里需要返回 ResponseBody到前端，
-     * 同时由于我们禁用SessionDao, logoutFilter处理时，获取不到认证主体即 SecurityUtils.getSubject().getPrincipal()，
+     * 用户登出
+     *
+     * 没有直接在拦截时使用shiro自带的logout过滤器，因为：
+     *   1、因为默认登出会跳转到自定义或默认("/")的URL中，而这里需要返回 ResponseBody到前端。
+     *   2、我们禁用了SessionDao, 自带的 logoutFilter处理时，无法通过cookie中的sessionId找到认证主体，
+     *	    即 SecurityUtils.getSubject().getPrincipal()，
      * 所以这里需要这样处理，先被自定义的ShiroJwtFilter认证，放入Principal,然后 logout()
+     *
+     * 调用Shiro自带的logout方法，shiro-redis也会清空缓存
      */
     @PostMapping("/logout")
     public Result logout() {
-        // 调用Shiro自带的logout方法，shiro-redis也会清空缓存
         SecurityUtils.getSubject().logout();
         return new Result(ResultCode.SUCCESS);
     }

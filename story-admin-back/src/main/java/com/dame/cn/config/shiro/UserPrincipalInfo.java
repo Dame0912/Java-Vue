@@ -4,25 +4,23 @@ import com.dame.cn.config.jwt.JwtUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.crazycake.shiro.AuthCachePrincipal;
 
 import java.io.Serializable;
 
 /**
  * @author LYQ
- * @description So please use AuthCachePrincipal to tell shiro-redis how to get the cache key
- *              目的就是为了告诉redis如何获取 key
+ * @description 必须指定 getId() 方法，目的就是为了告诉redis如何获取 key
  * @since 2020/4/22 16:56
  **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserPrincipalInfo implements AuthCachePrincipal, Serializable {
+public class UserPrincipalInfo implements Serializable {
 
     private String token;
 
-    @Override
-    public String getAuthCacheKey() {
+    public String getId(){
         return JwtUtil.parseJwt(this.token).getId();
     }
+
 }

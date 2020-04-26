@@ -129,9 +129,7 @@ public class JwtAuthenticationToken implements AuthenticationToken {
 
 > <font style="color: red">**目的：**</font>完成用户的身份认证，以及授权
 
-
-
-​	由于我们使用 JWT 完成用户的身份认证，所以 要自定义 AuthenticationToken 来支持，同时要在自定义Realm中显示声明。
+​	 由于我们使用 JWT 完成用户的身份认证，所以 要自定义 AuthenticationToken 来支持，同时要在自定义Realm中显示声明。
 
 ```java
 public class CustomerRealm extends AuthorizingRealm {
@@ -301,18 +299,16 @@ protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) 
 
 ```java
 /**
- *  So please use AuthCachePrincipal to tell shiro-redis how to get the cache key
- *  目的就是为了告诉redis如何获取 key
+ * 必须指定 getId() 方法，目的就是为了告诉redis如何获取 key
  **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserPrincipalInfo implements AuthCachePrincipal, Serializable {
+public class UserPrincipalInfo implements Serializable {
 
     private String token;
 
-    @Override
-    public String getAuthCacheKey() {
+    public String getId(){
         return JwtUtil.parseJwt(this.token).getId();
     }
 }
@@ -378,6 +374,27 @@ public class BaseExceptionHandler {
         e.printStackTrace();
         return new Result(ResultCode.SERVER_ERROR);
     }
+}
+```
+
+
+
+#### 8. 登出
+
+```java
+/**
+  * 没有直接在拦截时使用shiro自带的logout过滤器,因为：
+  *	1、因为默认登出会跳转到自定义或默认("/")的URL中，而这里需要返回 ResponseBody到前端。
+  * 2、我们禁用了SessionDao, 自带的 logoutFilter处理时，无法通过cookie中的sessionId找到认证主体，	
+  *	   即 SecurityUtils.getSubject().getPrincipal()，
+  * 所以这里需要这样处理，先被自定义的ShiroJwtFilter认证，放入Principal,然后 logout()
+  *
+  * 调用Shiro自带的logout方法，shiro-redis也会清空缓存
+  */
+@PostMapping("/logout")
+public Result logout() {
+    SecurityUtils.getSubject().logout();
+    return new Result(ResultCode.SUCCESS);
 }
 ```
 

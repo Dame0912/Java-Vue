@@ -1,7 +1,5 @@
 package com.dame.cn.config.shiro;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -75,9 +73,6 @@ public class ShiroUtil {
      * @return
      */
     public static boolean checkMd5Password(String password, String salt, String md5cipherText) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(password), "password不能为空");
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(md5cipherText), "md5cipherText不能为空");
-
         ByteSource credentialsSalt = new Md5Hash(salt);
         //通用散列加密方法
         SimpleHash hash = new SimpleHash(ShiroUtil.hashAlgorithmName, password, credentialsSalt, ShiroUtil.hashIterations);

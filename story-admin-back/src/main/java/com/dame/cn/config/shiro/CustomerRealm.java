@@ -67,7 +67,7 @@ public class CustomerRealm extends AuthorizingRealm {
          * ByteSource credentialsSalt： 密码的盐值
          * String realmName：realmName
          */
-        // return new SimpleAuthenticationInfo(jwtToken, jwtToken, getName());
+         //return new SimpleAuthenticationInfo(jwtToken, jwtToken, getName());
         // 使用 UserPrincipalInfo 的原因是，使用了redis缓存，缓存存取的时候要我们指定 key
         return new SimpleAuthenticationInfo(new UserPrincipalInfo(jwtToken), jwtToken, getName());
     }
