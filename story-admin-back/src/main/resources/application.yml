@@ -16,10 +16,10 @@ spring:
     database: 10        #Redis索引0~15，默认为0
 
 
-
+#配置JWT
 jwt:
   config:
-    token-expire-time: 1
+    token-expire-time: 5
     secret-key: story-admin
 
 

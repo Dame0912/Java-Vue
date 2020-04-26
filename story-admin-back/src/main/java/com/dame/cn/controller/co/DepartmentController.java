@@ -1,6 +1,7 @@
 package com.dame.cn.controller.co;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.Department;
 import com.dame.cn.beans.response.Result;
 import com.dame.cn.beans.response.ResultCode;
@@ -38,6 +39,7 @@ public class DepartmentController {
         if (StringUtils.isEmpty(department.getPid())) {
             department.setPid("0");
         }
+        department.setCreator(LoginUserContext.getCurrentUser().getUsername());
         departmentService.save(department);
         return new Result(ResultCode.SUCCESS);
     }
@@ -61,6 +63,7 @@ public class DepartmentController {
     @PutMapping(value = "department/{id}")
     public Result update(@PathVariable("id") String id, @RequestBody Department department) {
         department.setId(id);
+        department.setEditor(LoginUserContext.getCurrentUser().getUsername());
         departmentService.updateById(department);
         return new Result(ResultCode.SUCCESS);
     }

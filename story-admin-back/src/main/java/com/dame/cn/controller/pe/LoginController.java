@@ -3,23 +3,20 @@ package com.dame.cn.controller.pe;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
+import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.User;
 import com.dame.cn.beans.response.BizException;
 import com.dame.cn.beans.response.Result;
 import com.dame.cn.beans.response.ResultCode;
 import com.dame.cn.beans.vo.ProfileResult;
-import com.dame.cn.config.jwt.JwtUtil;
-import com.dame.cn.config.shiro.UserPrincipalInfo;
+import com.dame.cn.config.shiro.ShiroUtil;
 import com.dame.cn.service.pe.UserService;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -59,8 +56,7 @@ public class LoginController {
     //@RequiresAuthentication, 加不加都一样，自定义的filter已经认证过了
     @PostMapping("/login/info")
     public Result profile() {
-        UserPrincipalInfo userPrincipalInfo = (UserPrincipalInfo) SecurityUtils.getSubject().getPrincipal();
-        ProfileResult profileResult = userService.getUserProfile(userPrincipalInfo.getToken());
+        ProfileResult profileResult = userService.getUserProfile();
         return new Result(ResultCode.SUCCESS, profileResult);
     }
 
@@ -81,9 +77,8 @@ public class LoginController {
      * 获取个人信息，前台 我的 功能
      */
     @PostMapping(value = "/profile")
-    public Result getProfileInfo(HttpServletRequest request) {
-        UserPrincipalInfo userPrincipalInfo = (UserPrincipalInfo) SecurityUtils.getSubject().getPrincipal();
-        String userId = JwtUtil.parseJwt(userPrincipalInfo.getToken()).getId();
+    public Result getProfileInfo() {
+        String userId = LoginUserContext.getCurrentUser().getUserId();
         User user = userService.getById(userId);
         user.setPassword("******");
         Map<String, Object> beanMap = BeanUtil.beanToMap(user);
@@ -95,22 +90,16 @@ public class LoginController {
      * 修改密码
      */
     @PutMapping(value = "/edit/pwd")
-    public Result editPassWord(HttpServletRequest request, @RequestBody Map<String, Object> map) {
-        String authorization = request.getHeader("Authorization");
-        if (StringUtils.isEmpty(authorization)) {
-            throw new BizException(ResultCode.UNAUTHENTICATED);
-        }
-        String token = authorization.replace("Bearer ", "");
-        Claims claims = JwtUtil.parseJwt(token);
-        String userId = claims.getId();
-        // 原密码
+    public Result editPassWord(@RequestBody Map<String, Object> map) {
+        String userId = LoginUserContext.getCurrentUser().getUserId();
         User user = userService.getById(userId);
-        if (null == user || !user.getPassword().equals(MapUtil.get(map, "originPwd", String.class))) {
+        if(null == user || !ShiroUtil.checkMd5Password(MapUtil.getStr(map,"originPwd"), ShiroUtil.salt, user.getPassword())){
             throw new BizException(ResultCode.PWD_ERROR);
         }
-        user.setPassword(MapUtil.get(map, "newPwd", String.class));
+        String pwd = ShiroUtil.md5(MapUtil.getStr(map,"newPwd"), ShiroUtil.salt);
+        user.setPassword(pwd);
+        user.setLastPwdModifiedTime(new Date());
         userService.updateById(user);
-        // 新密码
         return new Result(ResultCode.SUCCESS);
     }
 }

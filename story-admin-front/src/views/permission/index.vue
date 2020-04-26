@@ -201,7 +201,7 @@
             PermApi.saveOrUpdate(this.permForm).then(res => {
               this.$message({message: res.message, type: res.success ? 'success' : 'error'})
               this.permForm = {}
-              this.fetchData()
+              location.reload()
             })
           }else{
             return false

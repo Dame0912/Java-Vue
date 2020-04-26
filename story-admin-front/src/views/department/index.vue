@@ -31,9 +31,9 @@
                   <el-dropdown-item icon="el-icon-circle-plus-outline">
                     <el-button type="text" @click="handlAdd('')">添加子部门</el-button>
                   </el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-check">
+                  <!--<el-dropdown-item icon="el-icon-check">
                     <el-button type="text">查看待分配员工</el-button>
-                  </el-dropdown-item>
+                  </el-dropdown-item>-->
                 </el-dropdown-menu>
               </el-dropdown>
             </span>
@@ -62,7 +62,7 @@
                     <el-dropdown-item icon="el-icon-check">
                       <el-button type="text" @click="handlUpdate(data.id)">查看部门</el-button>
                     </el-dropdown-item>
-                    <el-dropdown-item icon="el-icon-circle-plus-outline">查看待分配员工</el-dropdown-item>
+                    <!--<el-dropdown-item icon="el-icon-circle-plus-outline">查看待分配员工</el-dropdown-item>-->
                     <el-dropdown-item icon="el-icon-circle-check">
                       <el-button type="text" @click="handlDelete(data.id)">删除部门</el-button>
                     </el-dropdown-item>
@@ -74,12 +74,13 @@
         </el-tree>
       </div>
     </el-card>
-    <dept-info ref="deptRef"/>
+    <dept-info ref="deptRef" @refreshDept = "deptList"/>
   </div>
 </template>
 
 <script>
   import { organList, detail, remove, saveOrUpdate } from '@/api/department'
+  import { getAll } from '@/api/user'
   import DeptInfo from './deptInfo'
 
   export default {
@@ -95,7 +96,7 @@
       DeptInfo
     },
     created() {
-      this.deptList()
+      this.getBaseData()
     },
     methods: {
       deptList() {
@@ -128,17 +129,25 @@
               type: res.success ? 'success' : 'error',
               message: res.message
             })
-            setTimeout(() => {
-              if (res.success) {
-                location.reload()
-              }
-            }, 500)
+            this.deptList()
           })
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
           })
+        })
+      },
+      getBaseData(){
+        this.listLoading = true
+        organList().then(response => {
+          this.companyWithDept = response.data
+          this.deptCategory = this.companyWithDept.deptCategory
+          getAll().then(res=>{
+            this.$refs.deptRef.users = res.data
+            this.listLoading = false
+          })
+
         })
       }
     }

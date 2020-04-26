@@ -1,11 +1,18 @@
 import request from '@/utils/request'
 
 
-export function findAll(data) {
+export function findAllPage(data) {
   return request({
     url: '/sys/user/list',
     method: 'get',
     params: data
+  })
+}
+
+export function getAll() {
+  return request({
+    url: '/sys/user/all',
+    method: 'get'
   })
 }
 

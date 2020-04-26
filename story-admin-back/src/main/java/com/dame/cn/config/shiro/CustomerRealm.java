@@ -60,15 +60,15 @@ public class CustomerRealm extends AuthorizingRealm {
         }catch (JwtException e) {
             throw new AuthenticationException("token 过期");
         }
-        // 这边就不需要校验了，所以传的都是jwtToken
-        /**
+
+        /*
          * Object principal: 传递的安全数据
          * Object hashedCredentials： 数据库密码
          * ByteSource credentialsSalt： 密码的盐值
          * String realmName：realmName
          */
         // return new SimpleAuthenticationInfo(jwtToken, jwtToken, getName());
-        // 使用 UserPrincipalInfo 的原因是，假如了redis缓存，缓存存取的时候要我们指定 key
+        // 使用 UserPrincipalInfo 的原因是，使用了redis缓存，缓存存取的时候要我们指定 key
         return new SimpleAuthenticationInfo(new UserPrincipalInfo(jwtToken), jwtToken, getName());
     }
 
@@ -80,7 +80,7 @@ public class CustomerRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        log.info("授权校验。。。。。。");
+        log.info("用户授权。。。。。。");
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         UserPrincipalInfo userPrincipalInfo = (UserPrincipalInfo) principals.getPrimaryPrincipal();
         String jwtToken = userPrincipalInfo.getToken();

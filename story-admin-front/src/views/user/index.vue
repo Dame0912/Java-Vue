@@ -240,7 +240,7 @@
       },
       fetchData() {
         this.listLoading = true
-        UserApi.findAll(this.listQuery).then(res => {
+        UserApi.findAllPage(this.listQuery).then(res => {
           this.total = res.data.total
           this.dataList = res.data.rows
           this.listLoading = false
@@ -253,7 +253,7 @@
       },
       getBaseData(){
         this.listLoading = true
-        UserApi.findAll(this.listQuery).then(res => {
+        UserApi.findAllPage(this.listQuery).then(res => {
           this.total = res.data.total
           this.dataList = res.data.rows
           organList().then(response => {

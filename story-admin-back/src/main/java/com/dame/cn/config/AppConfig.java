@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Description TODO
- * @Author lyq
- * @Date 2020/3/30 15:16
+ * @author LYQ
+ * @description 应用配置
+ * @since 2020/4/26 8:43
  **/
 @Configuration
 public class AppConfig {

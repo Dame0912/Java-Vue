@@ -5,6 +5,7 @@ import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.Role;
 import com.dame.cn.beans.entities.RolePermission;
 import com.dame.cn.beans.response.PageResult;
@@ -13,7 +14,6 @@ import com.dame.cn.beans.response.ResultCode;
 import com.dame.cn.service.pe.RolePermissionService;
 import com.dame.cn.service.pe.RoleService;
 import com.dame.cn.utils.IdWorker;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,6 +77,7 @@ public class RoleController {
     @PostMapping(value = "/save")
     public Result add(@RequestBody Role role) {
         role.setId(String.valueOf(idWorker.nextId()));
+        role.setCreator(LoginUserContext.getCurrentUser().getUsername());
         roleService.save(role);
         return Result.SUCCESS();
     }
@@ -87,6 +88,7 @@ public class RoleController {
     @PutMapping(value = "/update/{id}")
     public Result update(@PathVariable(name = "id") String id, @RequestBody Role role) {
         role.setId(id);
+        role.setEditor(LoginUserContext.getCurrentUser().getUsername());
         roleService.updateById(role);
         return Result.SUCCESS();
     }

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.Permission;
 import com.dame.cn.beans.entities.Role;
 import com.dame.cn.beans.entities.User;
@@ -15,10 +16,10 @@ import com.dame.cn.beans.response.ResultCode;
 import com.dame.cn.beans.vo.ProfileResult;
 import com.dame.cn.config.jwt.JwtUtil;
 import com.dame.cn.config.shiro.JwtAuthenticationToken;
+import com.dame.cn.config.shiro.ShiroUtil;
 import com.dame.cn.mapper.UserMapper;
 import com.dame.cn.service.pe.UserRoleService;
 import com.dame.cn.service.pe.UserService;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -80,7 +81,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String password = loginMap.get("password");
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<User>().eq(User::getMobile, mobile);
         User user = userService.getOne(wrapper);
-        if (null == user || !user.getPassword().equals(password)) {
+        if (null == user || !ShiroUtil.checkMd5Password(password, ShiroUtil.salt, user.getPassword())) {
             throw new BizException(ResultCode.MOBILE_OR_PASSWORD_ERROR);
         } else {
             //登录成功
@@ -91,10 +92,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public ProfileResult getUserProfile(String token) {
+    public ProfileResult getUserProfile() {
         try {
-            Claims claims = JwtUtil.parseJwt(token);
-            String userId = claims.getId();
+            String userId = LoginUserContext.getCurrentUser().getUserId();
             User user = userService.getById(userId);
             List<Permission> permissionList = baseMapper.getUserPerms(userId);
             return new ProfileResult(user, permissionList);

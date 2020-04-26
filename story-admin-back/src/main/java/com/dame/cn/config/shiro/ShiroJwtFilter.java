@@ -2,6 +2,7 @@ package com.dame.cn.config.shiro;
 
 import com.alibaba.fastjson.JSON;
 import com.dame.cn.beans.consts.JwtTokenConst;
+import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.response.Result;
 import com.dame.cn.beans.response.ResultCode;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +31,11 @@ public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        log.info("shiroJwtFilter 开始拦截。。。路径：{}。。。", WebUtils.toHttp(request).getRequestURI());
         if (this.isLoginAttempt(request, response)) {
             try {
                 return this.executeLogin(request, response);
-            }catch (Exception e1) {
-                log.error("ShiroJwtFilter.isAccessAllowed 异常:{}",e1.getMessage());
+            } catch (Exception e1) {
+                log.error("ShiroJwtFilter.isAccessAllowed 异常:{}", e1.getMessage());
                 // 捕获异常，返回false，执行认证失败方法，即下面的 onAccessDenied 方法，
                 return false;
             }
@@ -44,7 +44,7 @@ public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
     }
 
     /**
-     * 真正判断是否登陆成功
+     * 真正判断是否认证成功
      */
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
@@ -54,6 +54,8 @@ public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
         // 交给自定义的Realm, 进行认证。 如果失败，会抛异常，在 isAccessAllowed() 中捕获处理
         getSubject(request, response).login(new JwtAuthenticationToken(jwtToken));
 
+        // 将登陆人信息放入ThreadLocal,方便使用
+        new LoginUserContext(jwtToken);
         return true;
     }
 
@@ -71,21 +73,21 @@ public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
     /**
      * 父类失败要走的方法
      *
-        protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-            boolean loggedIn = false; //false by default or we wouldn't be in this method
-            if (isLoginAttempt(request, response)) {
-                loggedIn = executeLogin(request, response);
-            }
-            if (!loggedIn) {
-                sendChallenge(request, response);
-            }
-            return loggedIn;
-        }
+     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+     boolean loggedIn = false; //false by default or we wouldn't be in this method
+     if (isLoginAttempt(request, response)) {
+     loggedIn = executeLogin(request, response);
+     }
+     if (!loggedIn) {
+     sendChallenge(request, response);
+     }
+     return loggedIn;
+     }
      */
 
     /**
      * 重写，认证失败走的方法，避免父类中调用再次executeLogin
-     *
+     * <p>
      * 构建 200 返回码，方便前端处理。
      */
     @Override
