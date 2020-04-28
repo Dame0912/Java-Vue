@@ -20,7 +20,9 @@ public class UserPrincipalInfo implements Serializable {
     private String token;
 
     public String getId(){
-        return JwtUtil.parseJwt(this.token).getId();
+        return (String)JwtUtil.getPlayHold(this.token).get("jti");
+        // 因为在登陆失效的时候，需要获取redis的key，此时 parseJwt 没法解析，会报过期
+        // return JwtUtil.parseJwt(this.token).getId();
     }
 
 }

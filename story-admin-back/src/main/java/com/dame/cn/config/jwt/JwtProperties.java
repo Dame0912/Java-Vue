@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author LYQ
- * @description TODO
+ * @description jwt相关配置项。
  * @since 2020/4/17 11:03
  **/
 @ConfigurationProperties(prefix = "jwt.config")
@@ -13,19 +13,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class JwtProperties {
 
     /**
-     * token过期时间，单位分钟
+     * token过期时间，单位分钟。一般该时间长于更新令牌时间。如：24H
      */
     Integer tokenExpireTime;
 
     /**
-     * 更新令牌时间，单位分钟
+     * 更新令牌时间，单位分钟。一般该时间短于更新令牌时间。如：2H
      */
-    Integer refreshCheckTime;
-
-    /**
-     * Shiro缓存有效期，单位分钟
-     */
-    Integer shiroCacheExpireTime;
+    Integer refreshTokenTime;
 
     /**
      * token加密密钥

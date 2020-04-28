@@ -13,6 +13,7 @@ public class JwtTokenConst {
     // token内容前缀，有个空格
     public final static String TOKEN_PREFIX = "Bearer ";
 
-
+    // token生成的时间
+    public final static String CURRENT_TIME_MILLIS = "currentTimeMillis";
 
 }

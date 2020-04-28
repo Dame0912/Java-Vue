@@ -34,8 +34,9 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ mobile: username.trim(), password: password }).then(response => {
-        commit('SET_TOKEN', response.data)
-        setToken(response.data)
+        // 后端将token放入了Header中，在request.js统一处理
+        // commit('SET_TOKEN', response.data)
+        // setToken(response.data)
         resolve()
       }).catch(error => {
         reject(error)

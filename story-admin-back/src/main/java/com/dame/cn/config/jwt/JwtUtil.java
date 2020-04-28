@@ -71,11 +71,16 @@ public class JwtUtil {
     /**
      * 不校验token，单纯获取token的消息体内容
      */
-    public static Map getPlayHold(String token) throws UnsupportedEncodingException {
+    public static Map getPlayHold(String token) {
         String playHold = token.substring(token.indexOf(".") + 1, token.lastIndexOf("."));
         Base64UrlCodec base64UrlCodec = new Base64UrlCodec();
         byte[] decode = base64UrlCodec.decode(playHold);
-        String decodeStr = new String(decode, "utf-8");
+        String decodeStr = null;
+        try {
+            decodeStr = new String(decode, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return JSON.parseObject(decodeStr, Map.class);
     }
 

@@ -1,8 +1,11 @@
 package com.dame.cn.config;
 
+import com.dame.cn.config.jwt.JwtProperties;
+import com.dame.cn.config.redis.RedisClient;
 import com.dame.cn.config.shiro.CustomerRealm;
 import com.dame.cn.config.shiro.ShiroFilterMapProperties;
 import com.dame.cn.config.shiro.ShiroJwtFilter;
+import com.dame.cn.onebyone.OneByOneService;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
@@ -30,6 +33,15 @@ import java.util.Map;
  **/
 @Configuration
 public class ShiroConfig {
+
+    @Autowired
+    private RedisClient redisClient;
+    @Autowired
+    private OneByOneService oneByOneService;
+    @Autowired
+    private JwtProperties jwtProperties;
+    @Autowired
+    private JedisPool jedisPool;
 
     // 配置自定义Realm
     @Bean
@@ -67,7 +79,7 @@ public class ShiroConfig {
 
         // 3.添加自定义的过滤器
         Map<String, Filter> filterMap = new HashMap<>();
-        filterMap.put("jwt", new ShiroJwtFilter());
+        filterMap.put("jwt", new ShiroJwtFilter(redisClient, oneByOneService, jwtProperties,securityManager));
         filterFactoryBean.setFilters(filterMap);
 
         /*
@@ -112,9 +124,6 @@ public class ShiroConfig {
     }
 
     // *****************  配置Shiro基于redis的会话和缓存管理，开始 ********************
-    @Autowired
-    private JedisPool jedisPool;
-
     // 1. 配置shiro的RedisManager，通过shiro-redis包提供的RedisManager统一对redis操作
     private RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();

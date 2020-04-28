@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {Message} from 'element-ui'
 import store from '@/store'
-import {getToken} from '@/utils/auth'
+import {getToken,setToken} from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
@@ -44,6 +44,16 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
+    // 刷新token, 注意后台给的是 Authorization，这边要用小写
+    let token = response.headers['authorization']
+    console.log('token',token);
+    if(token){
+      console.log("set token")
+      setToken(token)
+      store.commit('user/SET_TOKEN', token)
+    }
+
+
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.

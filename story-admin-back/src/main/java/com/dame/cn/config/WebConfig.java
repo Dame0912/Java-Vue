@@ -1,5 +1,6 @@
 package com.dame.cn.config;
 
+import com.dame.cn.beans.consts.JwtTokenConst;
 import com.dame.cn.config.web.filter.LoginUserResponseFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -30,14 +31,19 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public FilterRegistrationBean corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        // 是否发送Cookie信息
-        config.setAllowCredentials(true);
         // 放行哪些原始域
         config.addAllowedOrigin("*");
+        // 是否发送Cookie信息
+        config.setAllowCredentials(true);
         // 放行哪些原始域(头部信息)
         config.addAllowedHeader("*");
         // 放行哪些原始域(请求方式)
         config.addAllowedMethod("*");
+        // 暴露哪些头部信息（因为跨域访问默认不能获取全部头部信息）
+        config.addExposedHeader(JwtTokenConst.TOKEN_KEY);
+        // 配置预检的有效时长，在时长内无需再次校验，单位为秒。如果请求的URL不同，即使参数不同，也会预检查。
+        // 前后端项目，一般跨域，浏览器会先发送一个OPTION请求，通过了再发送真正的请求。为了不让每次都预检。
+        config.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));

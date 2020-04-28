@@ -19,7 +19,8 @@ spring:
 #配置JWT
 jwt:
   config:
-    token-expire-time: 5
+    token-expire-time: 2 #token的过期时间要长于刷新token时间
+    refresh-token-time: 1
     secret-key: story-admin
 
 

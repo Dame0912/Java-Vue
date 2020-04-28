@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.dame.cn.beans.consts.JwtTokenConst;
+import com.dame.cn.beans.consts.RedisConst;
 import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.Permission;
 import com.dame.cn.beans.entities.Role;
@@ -14,11 +16,12 @@ import com.dame.cn.beans.entities.User;
 import com.dame.cn.beans.response.BizException;
 import com.dame.cn.beans.response.ResultCode;
 import com.dame.cn.beans.vo.ProfileResult;
+import com.dame.cn.config.jwt.JwtProperties;
 import com.dame.cn.config.jwt.JwtUtil;
+import com.dame.cn.config.redis.RedisClient;
 import com.dame.cn.config.shiro.JwtAuthenticationToken;
 import com.dame.cn.config.shiro.ShiroUtil;
 import com.dame.cn.mapper.UserMapper;
-import com.dame.cn.service.pe.UserRoleService;
 import com.dame.cn.service.pe.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +46,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private UserService userService;
     @Autowired
-    private UserRoleService userRoleService;
+    private RedisClient redisClient;
+    @Autowired
+    private JwtProperties jwtProperties;
 
 
     @Override
@@ -83,9 +88,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = userService.getOne(wrapper);
         if (null == user || !ShiroUtil.checkMd5Password(password, ShiroUtil.salt, user.getPassword())) {
             throw new BizException(ResultCode.MOBILE_OR_PASSWORD_ERROR);
-        } else {
-            //登录成功
-            String token = JwtUtil.createJwt(user.getId(), user.getUsername(), null);
+        } else { //登录成功
+
+            String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+
+            // token中放入生成时间
+            Map<String, Object> map = MapUtil.of(JwtTokenConst.CURRENT_TIME_MILLIS, currentTimeMillis);
+            String token = JwtUtil.createJwt(user.getId(), user.getUsername(), map);
+
+            // redis中也放入token生成的时间，过期时间 = token过期时间
+            String redisTokenKey = RedisConst.JWT_TOKEN_TIME + user.getId();
+            redisClient.setex(redisTokenKey, jwtProperties.getTokenExpireTime() * 60, currentTimeMillis);
+
+            // 这个可以没有
             SecurityUtils.getSubject().login(new JwtAuthenticationToken(token));
             return token;
         }
