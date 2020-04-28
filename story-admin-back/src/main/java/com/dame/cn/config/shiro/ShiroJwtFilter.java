@@ -48,7 +48,7 @@ public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
                 return this.executeLogin(request, response);
             } catch (Exception e1) {
                 log.error("ShiroJwtFilter.isAccessAllowed 异常:{}", e1.getMessage());
-                // 捕获异常，返回false，执行认证失败方法，即下面的 onAccessDenied 方法，
+                // 捕获异常，返回false，执行认证失败方法，即下面的 onAccessDenied 方法
                 return false;
             }
         }
