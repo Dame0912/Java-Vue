@@ -125,11 +125,15 @@ public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
      * 清理 Redis缓存
      */
     private void clearCache(ServletRequest request) {
+        // 获取Token
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String token = httpServletRequest.getHeader(JwtTokenConst.TOKEN_KEY);
         String jwtToken = token.replace(JwtTokenConst.TOKEN_PREFIX, "");
+
+        // 获取缓存管理器CacheManager
         CacheManager cacheManager = securityManager.getCacheManager();
 
+        // 传递的安全数据
         UserPrincipalInfo userPrincipalInfo = new UserPrincipalInfo(jwtToken);
 
         Collection<Realm> realms = securityManager.getRealms();
@@ -138,8 +142,9 @@ public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
                 AuthorizingRealm authorizingRealm = (AuthorizingRealm) realm;
                 // 获取缓存名称
                 String authorizationCacheName = authorizingRealm.getAuthorizationCacheName();
+                // 根据缓存名称，拿到具体缓存实现
                 Cache<Object, Object> ss = cacheManager.getCache(authorizationCacheName);
-                // 获取缓存KEY
+                // 获取缓存KEY，移除缓存
                 ss.remove(userPrincipalInfo.getId());
             }
         }

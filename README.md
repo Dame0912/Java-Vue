@@ -400,6 +400,47 @@ public Result logout() {
 
 
 
+#### 9. token失效，shiro-redis数据清除
+
+> <font style="color: red">**原因：**</font>Token失效，shiro-redis中保存的用户权限信息没有清除（默认30分钟过期）
+>
+> <font style="color: red">**解决：**</font>Token失效，会进入onAccessDenied 方法，我们手动清除
+
+```java
+/**
+ * 清理 Redis缓存
+ */
+private void clearCache(ServletRequest request) {
+    // 获取Token
+	HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+	String token = httpServletRequest.getHeader(JwtTokenConst.TOKEN_KEY);
+	String jwtToken = token.replace(JwtTokenConst.TOKEN_PREFIX, "");
+    
+    // 获取缓存管理器CacheManager
+	CacheManager cacheManager = securityManager.getCacheManager();
+	
+    // 传递的安全数据
+	UserPrincipalInfo userPrincipalInfo = new UserPrincipalInfo(jwtToken);
+
+	Collection<Realm> realms = securityManager.getRealms();
+	for (Realm realm : realms) {
+		if (realm instanceof AuthorizingRealm) {
+			AuthorizingRealm authorizingRealm = (AuthorizingRealm) realm;
+			// 获取缓存名称
+			String authorizationCacheName = authorizingRealm.getAuthorizationCacheName();
+            // 根据缓存名称，拿到具体缓存实现
+			Cache<Object, Object> ss = cacheManager.getCache(authorizationCacheName);
+			// 获取缓存KEY，移除信息
+			ss.remove(userPrincipalInfo.getId());
+		}
+	}
+}
+```
+
+
+
+
+
 ### 五、前台
 
 > <font style="color: red">**未做修改**</font>
