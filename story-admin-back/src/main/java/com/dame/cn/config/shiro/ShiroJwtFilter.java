@@ -6,8 +6,13 @@ import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.response.Result;
 import com.dame.cn.beans.response.ResultCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.cache.Cache;
+import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.realm.Realm;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-import org.apache.shiro.web.util.WebUtils;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
@@ -17,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 
 /**
  * @author LYQ
@@ -25,6 +31,12 @@ import java.io.PrintWriter;
  **/
 @Slf4j
 public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
+
+    private DefaultWebSecurityManager securityManager;
+
+    public ShiroJwtFilter(SecurityManager securityManager) {
+        this.securityManager = (DefaultWebSecurityManager) securityManager;
+    }
 
     /**
      * 过滤器入口，判断请求是否放行
@@ -73,16 +85,16 @@ public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
     /**
      * 父类失败要走的方法
      *
-     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-     boolean loggedIn = false; //false by default or we wouldn't be in this method
-     if (isLoginAttempt(request, response)) {
-     loggedIn = executeLogin(request, response);
-     }
-     if (!loggedIn) {
-     sendChallenge(request, response);
-     }
-     return loggedIn;
-     }
+         protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+            boolean loggedIn = false; //false by default or we wouldn't be in this method
+            if (isLoginAttempt(request, response)) {
+                loggedIn = executeLogin(request, response);
+            }
+            if (!loggedIn) {
+                sendChallenge(request, response);
+            }
+            return loggedIn;
+         }
      */
 
     /**
@@ -92,6 +104,10 @@ public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+        // 清理redis缓存
+        this.clearCache(request);
+
+        // 返回前端失败结果
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setStatus(HttpStatus.OK.value());
         httpServletResponse.setCharacterEncoding("UTF-8");
@@ -103,5 +119,29 @@ public class ShiroJwtFilter extends BasicHttpAuthenticationFilter {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * 清理 Redis缓存
+     */
+    private void clearCache(ServletRequest request) {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        String token = httpServletRequest.getHeader(JwtTokenConst.TOKEN_KEY);
+        String jwtToken = token.replace(JwtTokenConst.TOKEN_PREFIX, "");
+        CacheManager cacheManager = securityManager.getCacheManager();
+
+        UserPrincipalInfo userPrincipalInfo = new UserPrincipalInfo(jwtToken);
+
+        Collection<Realm> realms = securityManager.getRealms();
+        for (Realm realm : realms) {
+            if (realm instanceof AuthorizingRealm) {
+                AuthorizingRealm authorizingRealm = (AuthorizingRealm) realm;
+                // 获取缓存名称
+                String authorizationCacheName = authorizingRealm.getAuthorizationCacheName();
+                Cache<Object, Object> ss = cacheManager.getCache(authorizationCacheName);
+                // 获取缓存KEY
+                ss.remove(userPrincipalInfo.getId());
+            }
+        }
     }
 }

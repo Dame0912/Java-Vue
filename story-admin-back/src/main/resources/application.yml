@@ -19,7 +19,7 @@ spring:
 #配置JWT
 jwt:
   config:
-    token-expire-time: 5
+    token-expire-time: 1
     secret-key: story-admin
 
 
