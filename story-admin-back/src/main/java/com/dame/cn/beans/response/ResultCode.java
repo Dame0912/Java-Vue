@@ -14,18 +14,25 @@ public enum ResultCode {
     SUCCESS(true,10000,"操作成功！"),
     //---系统错误返回码-----
     FAIL(false,10001,"操作失败"),
+    SERVER_ERROR(false,99999,"抱歉，系统繁忙，请稍后重试！"),
+
     UNAUTHENTICATED(false,10002,"您还未登录"),
     UNAUTHORISE(false,10003,"权限不足"),
     UNAUTH_EXPIRE(false,10004,"登陆失效"),
     PWD_ERROR(false,10005,"密码错误"),
-    SERVER_ERROR(false,99999,"抱歉，系统繁忙，请稍后重试！"),
+
+
 
     //---用户操作返回码  2xxxx----
-    MOBILEORPASSWORDERROR(false,20001,"用户名或密码错误");
+    MOBILEORPASSWORDERROR(false,20001,"用户名或密码错误"),
 
-    //---企业操作返回码  3xxxx----
-    //---权限操作返回码----
-    //---其他操作返回码----
+    //---企业操作返回码 3xxxx----
+    //---权限操作返回码 4xxxx----
+    //---其他操作返回码 5xxxx----
+    FILE_UPLOAD_ERROR(false,50001,"文件上传异常"),
+    OSS_UPLOAD_ERROR(false,50002,"OSS文件上传异常"),
+    OSS_POLICY_ERROR(false,50003,"OSS文件上传签名异常"),;
+
 
     //操作是否成功
     boolean success;

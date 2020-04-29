@@ -23,7 +23,7 @@ public class ProfileResult {
         this.userId = user.getId();
         this.mobile = user.getMobile();
         this.username = user.getUsername();
-        this.avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif";
+        this.avatar = user.getAvatar();
 
         // mybatis，left join的时候，主表有数据，从表没有，根据where条件结果如果没有数据，返回的是 [null]，所以必须特殊判断下
         if (CollUtil.isEmpty(permissionList) || (1 == permissionList.size() && null == permissionList.get(0))) {

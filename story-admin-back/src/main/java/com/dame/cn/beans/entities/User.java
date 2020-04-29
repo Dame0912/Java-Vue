@@ -67,6 +67,11 @@ public class User implements Serializable {
     private Date lastPwdModifiedTime;
 
     /**
+     * 用户头像
+     */
+    private String avatar;
+
+    /**
      * 创建人
      */
     private String creator;

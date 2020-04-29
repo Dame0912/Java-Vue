@@ -48,6 +48,9 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 10000) {
+      if(response.statusText === 'OK'){
+        return res;
+      }
       Message({
         message: res.message || 'Error',
         type: 'error',

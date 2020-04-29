@@ -148,6 +148,10 @@ export default {
       type: String,
       default: 'avatar'
     },
+    imgName: {
+      type: String,
+      default: 'hhhrh'
+    },
     // 原名key，类似于id，触发事件会带上（如果一个页面多个图片上传控件，可以做区分
     ki: {
       type: Number,
@@ -765,21 +769,23 @@ export default {
         url,
         params,
         field,
+        imgName,
         ki,
         createImgUrl
       } = this
       const fmData = new FormData()
-      fmData.append(
-        field,
-        data2blob(createImgUrl, mime),
-        field + '.' + imgFormat
-      )
       // 添加其他参数
       if (typeof params === 'object' && params) {
         Object.keys(params).forEach(k => {
           fmData.append(k, params[k])
         })
       }
+      fmData.append(
+        field,
+        data2blob(createImgUrl, mime),
+        imgName + '.' + imgFormat
+      )
+
       // 监听进度回调
       // const uploadProgress = (event) => {
       //   if (event.lengthComputable) {
@@ -800,6 +806,7 @@ export default {
           this.$emit('crop-upload-success', resData.data)
         })
         .catch(err => {
+          console.log("err:",err)
           if (this.value) {
             this.loading = 3
             this.hasError = true

@@ -13,6 +13,20 @@
             <div>Hello</div>
             {{ userInfo.username }}
           </pan-thumb>
+          <!-- 文件上传按钮 -->
+          <el-button type="primary" icon="el-icon-upload" @click="avatarChange">更换头像</el-button>
+          <image-cropper
+            :params="uploadData"
+            v-show="imageCropperShow"
+            :width="300"
+            :height="300"
+            :key="imageCropperKey"
+            :url="uploadURL"
+            field="file"
+            :imgName="imgName"
+            :imgFormat="imgFormat"
+            @close="close"
+            @crop-upload-success="cropSuccess"/>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-switch v-model="userInfo.status" active-color="#13ce66" inactive-color="#ff4949" :active-value="1"
@@ -50,12 +64,14 @@
 
 <script>
   import PanThumb from '@/components/PanThumb'
+  import ImageCropper from '@/components/ImageCropper'
   import store from '@/store'
   import * as UserAPi from '@/api/user'
+  import {upload_oss_policy} from '@/api/oss'
 
   export default {
     name: 'Profile',
-    components: {PanThumb},
+    components: {PanThumb, ImageCropper},
     data() {
       let validateCheckPwd = (rule, value, callback) => {
         if (value !== this.pwdForm.newPwd) {
@@ -78,6 +94,20 @@
           newPwd: '',
           checkPwd: ''
         },
+        uploadData: {
+          OSSAccessKeyId: '',
+          policy: '',
+          signature: '',
+          key: '',
+          dir: '',
+          success_action_status: 200
+        },
+        uploadURL: '',
+        imageCropperShow: false, // 是否显示上传组件
+        imageCropperKey: 0, // 上传组件id
+        imgName: '',
+        imgFormat: 'png',
+
         rules: {
           originPwd: [
             {required: true, message: '请输入原密码', trigger: 'blur'},
@@ -124,6 +154,48 @@
           this.userInfo = res.data
         })
       },
+      avatarChange() {
+        let _self = this;
+        return new Promise((resolve, reject) => {
+          upload_oss_policy().then(response => {
+            _self.uploadData.policy = response.data.policy
+            _self.uploadData.signature = response.data.signature
+            _self.uploadData.OSSAccessKeyId = response.data.accessKeyId
+            _self.uploadData.key = response.data.dir + '/${filename}'
+            _self.uploadData.dir = response.data.dir
+            _self.uploadURL = response.data.host
+            this.imgName = this.getUID();
+            this.imageCropperShow = true
+            resolve(true)
+          }).catch(err => {
+            console.log(err)
+            reject(false)
+          })
+        })
+      },
+      // 关闭上传组件
+      close() {
+        this.imageCropperShow = false
+        // 上传失败后，重新打开上传组件时初始化组件，否则显示上一次的上传结果
+        this.imageCropperKey = this.imageCropperKey + 1
+      },
+      cropSuccess(data) {
+        this.imageCropperShow = false
+        // data为后台返回的内容
+        this.userInfo.avatar = this.uploadURL + '/' + this.uploadData.dir + '/' + this.imgName + '.' + this.imgFormat;
+        // 上传成功后，重新打开上传组件时初始化组件，否则显示上一次的上传结果
+        this.imageCropperKey = this.imageCropperKey + 1
+        UserAPi.editAvatar({'avatar': this.userInfo.avatar}).then(res => {
+          this.$message({message: res.message, type: res.success ? 'success' : 'error'})
+        })
+      },
+      getUID() { // 获取唯一值
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      },
+
     }
   }
 </script>

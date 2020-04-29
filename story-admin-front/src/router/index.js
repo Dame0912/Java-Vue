@@ -37,7 +37,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: '首页', icon: 'dashboard', affix: true }
+        meta: {title: '首页', icon: 'dashboard', affix: true}
       }
     ]
   },
@@ -51,10 +51,39 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/profile/index'),
         name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true }
+        meta: {title: 'Profile', icon: 'user', noCache: true}
       }
     ]
-  }
+  },
+
+  {
+    path: '/upload',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'upload',
+    meta: {title: '图片上传', icon: 'guide'},
+    root: true,
+    children: [
+      {
+        path: 'dataURL',
+        name: 'upload-dataUrl',
+        component: () => import('@/views/upload/dataURL'),
+        meta: {title: 'DataURL', icon: 'star', affix: true}
+      },
+      {
+        path: 'ossBackUpload',
+        name: 'upload-ossBack',
+        component: () => import('@/views/upload/ossBackUpload'),
+        meta: {title: 'OSS后台上传', icon: 'star', affix: true}
+      },
+      {
+        path: 'ossBackPolicy',
+        name: 'upload-ossBack-policy',
+        component: () => import('@/views/upload/ossBackPolicy'),
+        meta: {title: 'OSS后台签名后直传', icon: 'star', affix: true}
+      }
+    ]
+  },
 ]
 
 /**
@@ -68,43 +97,43 @@ export const asyncRoutes = [
     component: Layout,
     redirect: 'noredirect',
     name: 'settings',
-    meta: { title: '公司设置', icon: 'set' },
+    meta: {title: '公司设置', icon: 'set'},
     root: true,
     children: [
       {
         path: 'department',
         name: 'settings-department',
         component: () => import('@/views/department/index'),
-        meta: { title: '部门管理', icon: 'tree', noCache: true }
+        meta: {title: '部门管理', icon: 'tree', noCache: true}
       },
       {
         path: 'user',
         name: 'settings-user',
         component: () => import('@/views/user/index'),
-        meta: { title: '用户管理', icon: 'user', noCache: true }
+        meta: {title: '用户管理', icon: 'user', noCache: true}
       },
       {
         path: 'role',
         name: 'settings-role',
         component: () => import('@/views/role/index'),
-        meta: { title: '角色管理', icon: 'peoples', noCache: true }
+        meta: {title: '角色管理', icon: 'peoples', noCache: true}
       },
       {
         path: 'permission',
         name: 'settings-permission',
         component: () => import('@/views/permission/index'),
-        meta: { title: '权限管理', icon: 'lock', noCache: true }
+        meta: {title: '权限管理', icon: 'lock', noCache: true}
       },
     ]
   },
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  {path: '*', redirect: '/404', hidden: true}
 ]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({y: 0}),
   routes: constantRoutes,
   mode: 'history'
 })

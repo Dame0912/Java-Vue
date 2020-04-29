@@ -80,6 +80,15 @@ export function editPassWord(data) {
   })
 }
 
+
+export function editAvatar(data) {
+  return request({
+    url: `/sys/user/edit/avatar`,
+    method: 'put',
+    data
+  })
+}
+
 export function login(data) {
   return request({
     url: `/sys/user/login`,

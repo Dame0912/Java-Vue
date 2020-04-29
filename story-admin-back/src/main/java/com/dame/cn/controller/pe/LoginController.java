@@ -71,7 +71,6 @@ public class LoginController {
         User user = userService.getById(userId);
         user.setPassword("******");
         Map<String, Object> beanMap = BeanUtil.beanToMap(user);
-        beanMap.put("avatar", "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
         return new Result(ResultCode.SUCCESS, beanMap);
     }
 
@@ -90,6 +89,17 @@ public class LoginController {
         user.setLastPwdModifiedTime(new Date());
         userService.updateById(user);
         // 新密码
+        return new Result(ResultCode.SUCCESS);
+    }
+
+    /**
+     * 修改头像
+     */
+    @PutMapping(value = "/edit/avatar")
+    public Result editAvatar(@RequestBody Map<String, Object> map) {
+        String userId = LoginUserContext.getCurrentUser().getUserId();
+        User user = new User().setId(userId).setAvatar(MapUtil.get(map, "avatar", String.class));
+        userService.updateById(user);
         return new Result(ResultCode.SUCCESS);
     }
 }

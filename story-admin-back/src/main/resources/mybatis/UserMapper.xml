@@ -12,6 +12,7 @@
         <result column="department_id" property="departmentId" />
         <result column="department_name" property="departmentName" />
         <result column="last_pwd_modified_time" property="lastPwdModifiedTime" />
+        <result column="avatar" property="avatar" />
         <result column="creator" property="creator" />
         <result column="editor" property="editor" />
         <result column="created_time" property="createdTime" />
@@ -20,7 +21,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, mobile, username, password, status, department_id, department_name, last_pwd_modified_time, creator, editor, created_time, modified_time
+        id, mobile, username, password, status, department_id, department_name, last_pwd_modified_time, avatar, creator, editor, created_time, modified_time
     </sql>
 
     <select id="getUserPerms" parameterType="java.lang.String" resultType="com.dame.cn.beans.entities.Permission">

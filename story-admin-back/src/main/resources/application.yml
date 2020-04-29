@@ -6,13 +6,26 @@ spring:
     name: story-admin
   profiles:
     include: jdbc
-  jackson:
+  jackson: #日期返回前端乱码处理
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  servlet:
+    multipart: #文件上传大小设置，默认最大 1MB
+      max-file-size: 20MB
+      max-request-size: 20MB
 
 jwt:
   config:
-    token-expire-time: 1
+    token-expire-time: 60
     secret-key: story-admin
 
+aliyun:
+  oss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    access-key-id: LTAI4FrLarzdcXnMzi93gviG
+    access-key-secret: 换成自己的
+    bucket-name: story-admin
+    file-host: avatar
+    expire: 300
+    max-size: 20
 
