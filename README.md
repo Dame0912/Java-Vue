@@ -9,8 +9,10 @@
 ### 二、新增功能
 
 > **1、引入Shiro,完成后端认证及权限控制**
+
 > **2、jedis/jedisPool配置**
 >    （由于使用shiro-redis的jar完成Shiro的缓存配置，其依赖jedis,所以没有使用redisTemplate）。
+
 > **3、密码加密**
 
 
