@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: story-admin
+    name: java-vue
   profiles:
     include: jdbc
   jackson:
@@ -13,6 +13,6 @@ spring:
 jwt:
   config:
     token-expire-time: 1
-    secret-key: story-admin
+    secret-key: java-vue
 
 
