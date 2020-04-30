@@ -18,7 +18,7 @@
 
 ### 三、启动
 
-> **1、导入 shiro_jwt.sql**
+> **1、导入 java-vue.sql**
 
 
 

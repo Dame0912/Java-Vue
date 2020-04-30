@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: story-admin
+    name: java-vue
   profiles:
     include: jdbc
   jackson: #日期返回前端乱码处理
@@ -17,14 +17,14 @@ spring:
 jwt:
   config:
     token-expire-time: 60
-    secret-key: story-admin
+    secret-key: java-vue
 
 aliyun:
   oss:
     endpoint: oss-cn-hangzhou.aliyuncs.com
     access-key-id: LTAI4FrLarzdcXnMzi93gviG
     access-key-secret: 换成自己的
-    bucket-name: story-admin
+    bucket-name: java-vue
     file-host: avatar
     expire: 300
     max-size: 20
