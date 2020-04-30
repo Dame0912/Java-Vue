@@ -19,7 +19,7 @@
 
 ### 三、启动
 
-> **1、导入 shiro_jwt.sql**
+> **1、导入 java-vue.sql**
 >
 > **2、启动本地 Redis**
 

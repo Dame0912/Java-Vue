@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: story-admin
+    name: java-vue
   profiles:
     include: jdbc
   jackson:
@@ -20,7 +20,7 @@ spring:
 jwt:
   config:
     token-expire-time: 5
-    secret-key: story-admin
+    secret-key: java-vue
 
 
 #配置shiro拦截器链
