@@ -153,21 +153,21 @@ public Result upload_oss_back(@RequestParam("avatarFile") MultipartFile file)
 
 #### 6.1 服务端签名后直传原理
 
-<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.1/md%E5%9B%BE%E7%89%87/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%AD%BE%E5%90%8D%E5%90%8E%E7%9B%B4%E4%BC%A0%E5%8E%9F%E7%90%86.png?raw=true" />
+<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.0/md%E5%9B%BE%E7%89%87/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%AD%BE%E5%90%8D%E5%90%8E%E7%9B%B4%E4%BC%A0%E5%8E%9F%E7%90%86.png?raw=true" />
 
 #### 6.2 服务端签名
 
-<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.1/md%E5%9B%BE%E7%89%87/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%AD%BE%E5%90%8D%E5%8F%82%E8%80%83.png?raw=true" />
+<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.0/md%E5%9B%BE%E7%89%87/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%AD%BE%E5%90%8D%E5%8F%82%E8%80%83.png?raw=true" />
 
 #### 6.3 Bucket跨域配置
 
-<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.1/md%E5%9B%BE%E7%89%87/%E8%B7%A8%E5%9F%9F%E9%85%8D%E7%BD%AE%E4%BD%8D%E7%BD%AE.png?raw=true" />
+<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.0/md%E5%9B%BE%E7%89%87/%E8%B7%A8%E5%9F%9F%E9%85%8D%E7%BD%AE%E4%BD%8D%E7%BD%AE.png?raw=true" />
 
-<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.1/md%E5%9B%BE%E7%89%87/%E8%B7%A8%E5%9F%9F%E9%85%8D%E7%BD%AE.png?raw=true" />
+<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.0/md%E5%9B%BE%E7%89%87/%E8%B7%A8%E5%9F%9F%E9%85%8D%E7%BD%AE.png?raw=true" />
 
 #### 6.4 前端上传参数
 
-<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.1/md%E5%9B%BE%E7%89%87/PostObject%E5%89%8D%E7%AB%AF%E4%B8%8A%E4%BC%A0%E5%8F%82%E6%95%B0.png?raw=true" />
+<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.0/md%E5%9B%BE%E7%89%87/PostObject%E5%89%8D%E7%AB%AF%E4%B8%8A%E4%BC%A0%E5%8F%82%E6%95%B0.png?raw=true" />
 
 
 
@@ -386,15 +386,15 @@ handleUploadSuccess(res, file) {
 
 ##### 7.2.1 前端签名上传，遇到的一些坑（使用的 ImageCropper 组件）
 
-<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.1/md%E5%9B%BE%E7%89%87/%E5%89%8D%E7%AB%AF%E5%9D%911.png?raw=true" >
+<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.0/md%E5%9B%BE%E7%89%87/%E5%89%8D%E7%AB%AF%E5%9D%911.png?raw=true" >
 
-<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.1/md%E5%9B%BE%E7%89%87/%E5%89%8D%E7%AB%AF%E5%9D%912.png?raw=true" />
+<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.0/md%E5%9B%BE%E7%89%87/%E5%89%8D%E7%AB%AF%E5%9D%912.png?raw=true" />
 
-<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.1/md%E5%9B%BE%E7%89%87/%E5%89%8D%E7%AB%AF%E5%9D%913.png?raw=true" />
+<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.0/md%E5%9B%BE%E7%89%87/%E5%89%8D%E7%AB%AF%E5%9D%913.png?raw=true" />
 
-![坑4](https://github.com/Dame0912/Java-Vue/blob/3.0.1/md%E5%9B%BE%E7%89%87/%E5%89%8D%E7%AB%AF%E5%9D%914.png?raw=true)
+![坑4](https://github.com/Dame0912/Java-Vue/blob/3.0.0/md%E5%9B%BE%E7%89%87/%E5%89%8D%E7%AB%AF%E5%9D%914.png?raw=true)
 
-<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.1/md%E5%9B%BE%E7%89%87/%E5%89%8D%E7%AB%AF%E5%9D%915.png?raw=true" />
+<img src="https://github.com/Dame0912/Java-Vue/blob/3.0.0/md%E5%9B%BE%E7%89%87/%E5%89%8D%E7%AB%AF%E5%9D%915.png?raw=true" />
 
 
 
