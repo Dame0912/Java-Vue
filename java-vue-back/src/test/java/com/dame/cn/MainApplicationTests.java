@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-class StoryAdminApplicationTests {
+class MainApplicationTests {
 
     @Autowired
     private PermissionService permissionService;

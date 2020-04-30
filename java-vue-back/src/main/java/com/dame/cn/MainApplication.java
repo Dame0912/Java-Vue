@@ -10,10 +10,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @MapperScan("com.dame.cn.mapper")
 @SpringBootApplication
 @EnableConfigurationProperties(value = {JwtProperties.class, ShiroFilterMapProperties.class})
-public class StoryAdminApplication {
+public class MainApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(StoryAdminApplication.class, args);
+        SpringApplication.run(MainApplication.class, args);
     }
 
 }
