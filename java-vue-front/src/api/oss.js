@@ -8,7 +8,7 @@ export function upload_dataUrl(data) {
     data,
     headers: {
       'Content-Type': 'multipart/form-data',
-    }
+    },
   })
 }
 

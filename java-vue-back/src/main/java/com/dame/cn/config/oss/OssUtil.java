@@ -6,6 +6,7 @@ import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.MatchMode;
+import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.PolicyConditions;
 import com.dame.cn.beans.response.BizException;
 import com.dame.cn.beans.response.ResultCode;
@@ -53,11 +54,21 @@ public class OssUtil {
      *
      * @return 签名数据
      */
-    public static OssPolicyResult policy() {
+    public static OssPolicyResult policy(boolean pathTime, String... fileHost) {
         OssPolicyResult ossPolicyResult = new OssPolicyResult();
         // 存储目录,如：  avatar/2020/04/28
         String timePath = DateUtil.format(new Date(), "yyyy/MM/dd");
-        String dir = ossUtil.ossProperties.getFileHost() + "/" + timePath;
+        String dir;
+        if (null != fileHost && fileHost.length > 0) {
+            if (pathTime) {
+                dir = fileHost[0] + "/" + timePath;
+            } else {
+                dir = fileHost[0];
+            }
+
+        } else {
+            dir = ossUtil.ossProperties.getFileHost() + "/" + timePath;
+        }
 
         // 签名有效期
         long expireEndTime = System.currentTimeMillis() + ossUtil.ossProperties.getExpire() * 1000;
@@ -98,7 +109,7 @@ public class OssUtil {
      * @param file 文件
      * @return oss
      */
-    public static String upload(MultipartFile file) {
+    public static String upload(MultipartFile file, String... fileHost) {
         String fileURL;
         try {
             // 判断Bucket是否存在
@@ -117,7 +128,12 @@ public class OssUtil {
             // 生成时间路径
             String timePath = DateUtil.format(new Date(), "yyyy/MM/dd");
             // 生成最终文件路径：如：  avatar/2020/04/28/OUOJ-KJYJHJH-KJLJL.jpg
-            String filePath = ossUtil.ossProperties.getFileHost() + "/" + timePath + "/" + newFileName;
+            String filePath;
+            if (null != fileHost && fileHost.length > 0) {
+                filePath = fileHost[0] + "/" + timePath + "/" + newFileName;
+            } else {
+                filePath = ossUtil.ossProperties.getFileHost() + "/" + timePath + "/" + newFileName;
+            }
 
             // 获取上传文件流
             InputStream inputStream = file.getInputStream();
@@ -130,6 +146,27 @@ public class OssUtil {
             throw new BizException(ResultCode.OSS_UPLOAD_ERROR);
         }
         return fileURL;
+    }
+
+    /**
+     * 下载文件
+     */
+    public static InputStream downLoad(String objectName) {
+        try {
+            // ossObject包含文件所在的存储空间名称、文件名称、文件元信息以及一个输入流。
+            OSSObject ossObject = ossUtil.ossClient.getObject(ossUtil.ossProperties.getBucketName(), objectName);
+            InputStream inputStream = ossObject.getObjectContent();
+            return inputStream;
+
+            // 读取文件内容。
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(ossObject.getObjectContent()));
+//            while (true) {
+//                String line = reader.readLine();
+//                if (line == null) break;
+//            }
+        } catch (Exception e) {
+            throw new BizException(ResultCode.OSS_DOWNLOAD_ERROR);
+        }
     }
 
 

@@ -41,7 +41,7 @@
 //        DataSourceConfig dsConfig = new DataSourceConfig();
 //        dsConfig.setDbType(DbType.MYSQL)  // 设置数据库类型
 //                .setDriverName("com.mysql.jdbc.Driver")
-//                .setUrl("jdbc:mysql://127.0.0.1/shiro_jwt")
+//                .setUrl("jdbc:mysql://127.0.0.1/java-vue")
 //                .setUsername("root")
 //                .setPassword("root");
 //
@@ -50,7 +50,7 @@
 //        stConfig.setCapitalMode(true) //全局大写命名
 //                .setNaming(NamingStrategy.underline_to_camel) // 数据库表映射到实体的命名策略
 //                .setTablePrefix("sys_") // 表前缀
-//                .setInclude(new String[]{"sys_login_log"})  // 需要生成的表，多个：.setInclude(new String[] {"EMP","DEPT"})
+//                .setInclude(new String[]{"excel_user","excel_million_data"})  // 需要生成的表，多个：.setInclude(new String[] {"EMP","DEPT"})
 //                .setEntityLombokModel(true); // lombok
 //        //4. 包名策略配置
 //        PackageConfig pkConfig = new PackageConfig();

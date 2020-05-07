@@ -31,7 +31,10 @@ public enum ResultCode {
     //---其他操作返回码 5xxxx----
     FILE_UPLOAD_ERROR(false,50001,"文件上传异常"),
     OSS_UPLOAD_ERROR(false,50002,"OSS文件上传异常"),
-    OSS_POLICY_ERROR(false,50003,"OSS文件上传签名异常"),;
+    OSS_POLICY_ERROR(false,50003,"OSS文件上传签名异常"),
+
+    EXCEL_UPLOAD_ERROR(false,50004,"Excel文件上传异常"),
+    OSS_DOWNLOAD_ERROR(false,50005,"OSS文件下载异常");
 
 
     //操作是否成功

@@ -46,4 +46,9 @@ public class OssProperties {
      * 最大允许（MB）
      */
     private Integer maxSize;
+
+    /**
+     * Excel文件存放的根目录
+     */
+    private String excelHost;
 }

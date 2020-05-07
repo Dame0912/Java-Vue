@@ -51,6 +51,6 @@ public class AvatarUploadServiceImpl implements AvatarUploadService {
 
     @Override
     public OssUtil.OssPolicyResult upload_oss_policy() {
-        return OssUtil.policy();
+        return OssUtil.policy(true);
     }
 }

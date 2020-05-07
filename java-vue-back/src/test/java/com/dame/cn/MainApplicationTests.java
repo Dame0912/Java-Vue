@@ -1,7 +1,6 @@
 package com.dame.cn;
 
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.dame.cn.beans.entities.Permission;
@@ -9,7 +8,6 @@ import com.dame.cn.service.pe.PermissionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,7 +22,7 @@ class MainApplicationTests {
     private PermissionService permissionService;
 
     @Test
-    void contextLoads() {
+    public void contextLoads() {
         LambdaQueryWrapper<Permission> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(Permission::getType, Arrays.asList(1, 2));
         List<Permission> permList = permissionService.list(wrapper);

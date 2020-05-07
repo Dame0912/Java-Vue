@@ -46,7 +46,9 @@ service.interceptors.response.use(
   response => {
     const res = response.data
 
-    // if the custom code is not 20000, it is judged as an error.
+    if(res.code === undefined){
+      return response
+    }
     if (res.code !== 10000) {
       if(response.statusText === 'OK'){
         return res;
@@ -76,6 +78,7 @@ service.interceptors.response.use(
         }, 1500)
 
       }
+      console.log(response)
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
       return res

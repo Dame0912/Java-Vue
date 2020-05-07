@@ -84,6 +84,35 @@ export const constantRoutes = [
       }
     ]
   },
+
+  {
+    path: '/excel',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'excel',
+    meta: {title: 'Excel管理', icon: 'excel'},
+    root: true,
+    children: [
+      {
+        path: 'normal',
+        name: 'excel-normal',
+        component: () => import('@/views/excel/normal'),
+        meta: {title: '普通操作', icon: 'star', affix: true}
+      },
+      {
+        path: 'templateStyle',
+        name: 'excel-templateStyle',
+        component: () => import('@/views/excel/templateStyle'),
+        meta: {title: '样式模板', icon: 'star', affix: true}
+      },
+      {
+        path: 'million',
+        name: 'excel-million',
+        component: () => import('@/views/excel/million'),
+        meta: {title: '百万数据', icon: 'star', affix: true}
+      }
+    ]
+  },
 ]
 
 /**
