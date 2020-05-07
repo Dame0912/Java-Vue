@@ -22,7 +22,7 @@ jwt:
 aliyun:
   oss:
     endpoint: oss-cn-hangzhou.aliyuncs.com
-    access-key-id: LTAI4FrLarzdcXnMzi93gviG
+    access-key-id: 换成自己的
     access-key-secret: 换成自己的
     bucket-name: java-vue
     file-host: avatar

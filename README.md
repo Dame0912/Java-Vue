@@ -19,6 +19,8 @@
 ### 三、启动
 
 > **1、导入 java-vue.sql**
+>
+> **2、application.yml 中将  aliyun.oss 配置换成自己的**
 
 
 
