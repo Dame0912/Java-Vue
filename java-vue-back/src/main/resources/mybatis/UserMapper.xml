@@ -4,19 +4,40 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.dame.cn.beans.entities.User">
-        <id column="id" property="id" />
-        <result column="mobile" property="mobile" />
-        <result column="username" property="username" />
-        <result column="password" property="password" />
-        <result column="status" property="status" />
-        <result column="department_id" property="departmentId" />
-        <result column="department_name" property="departmentName" />
-        <result column="last_pwd_modified_time" property="lastPwdModifiedTime" />
-        <result column="creator" property="creator" />
-        <result column="editor" property="editor" />
-        <result column="created_time" property="createdTime" />
-        <result column="modified_time" property="modifiedTime" />
+        <id column="id" property="id"/>
+        <result column="mobile" property="mobile"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="status" property="status"/>
+        <result column="department_id" property="departmentId"/>
+        <result column="department_name" property="departmentName"/>
+        <result column="last_pwd_modified_time" property="lastPwdModifiedTime"/>
+        <result column="creator" property="creator"/>
+        <result column="editor" property="editor"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="modified_time" property="modifiedTime"/>
     </resultMap>
+    <resultMap id="sysUserMap" type="com.dame.cn.beans.dto.SysUser">
+        <id column="id" property="id"/>
+        <result column="mobile" property="mobile"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="status" property="status"/>
+        <result column="department_id" property="departmentId"/>
+        <result column="department_name" property="departmentName"/>
+        <collection property="roleList" ofType="com.dame.cn.beans.entities.Role">
+            <result column="rId" property="id"/>
+            <result column="rName" property="name"/>
+            <result column="rDes" property="description"/>
+        </collection>
+        <collection property="permissionList" ofType="com.dame.cn.beans.entities.Permission">
+            <result column="pId" property="id"/>
+            <result column="pName" property="name"/>
+            <result column="pCode" property="code"/>
+            <result column="pDes" property="description"/>
+        </collection>
+    </resultMap>
+
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
@@ -30,6 +51,20 @@
         LEFT JOIN pe_role_permission rp ON rp.role_id = r.id
         LEFT JOIN pe_permission p ON rp.permission_id = p.id
         WHERE u.id = #{userId}
+    </select>
+
+    <select id="getUserAndRP" parameterType="java.lang.String" resultMap="sysUserMap">
+        SELECT
+            u.id, u.`mobile`, u.`username`, u.`password`, u.`status`,u.`department_id`,u.`department_name`,
+	        r.id AS rId, r.`name` AS rName,r.`description` AS rDes,
+            p.id AS pId, p.name AS pName, p.`code` AS pCode, p.`description` AS pDes
+        FROM co_user u
+        LEFT JOIN pe_user_role ur ON u.id = ur.user_id
+        LEFT JOIN pe_role r ON r.id = ur.role_id
+        LEFT JOIN pe_role_permission rp ON rp.role_id = r.id
+        LEFT JOIN pe_permission p ON rp.permission_id = p.id
+        WHERE u.status = 1 AND u.mobile = #{mobile}
+        AND (p.type IS NULL OR p.`type` =3)
     </select>
 
 </mapper>

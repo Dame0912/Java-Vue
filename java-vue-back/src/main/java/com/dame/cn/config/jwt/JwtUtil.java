@@ -44,10 +44,9 @@ public class JwtUtil {
      * @param map  其它需要保存的
      * @return token
      */
-    public static String createJwt(String id, String name, Map<String, Object> map) {
+    public static String createJwt(String id, String name, Long expire, Map<String, Object> map) {
         //1.设置失效时间
-        long now = System.currentTimeMillis();//当前毫秒
-        long exp = now + jwtUtil.jwtProperties.getTokenExpireTime() * 60 * 1000L;
+        long exp = expire;
         //2.创建jwtBuilder
         JwtBuilder jwtBuilder = Jwts.builder().setId(id).setSubject(name)
                 .setIssuedAt(new Date())

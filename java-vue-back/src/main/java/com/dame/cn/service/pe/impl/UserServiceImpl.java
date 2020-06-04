@@ -7,17 +7,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.Permission;
 import com.dame.cn.beans.entities.User;
 import com.dame.cn.beans.response.BizException;
 import com.dame.cn.beans.response.ResultCode;
 import com.dame.cn.beans.vo.ProfileResult;
-import com.dame.cn.config.jwt.JwtUtil;
+import com.dame.cn.config.security.utils.SecurityUtils;
 import com.dame.cn.mapper.UserMapper;
-import com.dame.cn.service.pe.UserRoleService;
 import com.dame.cn.service.pe.UserService;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +36,6 @@ import java.util.Map;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
     private UserService userService;
-    @Autowired
-    private UserRoleService userRoleService;
 
 
     @Override
@@ -67,30 +62,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 wrapper.isNotNull(User::getDepartmentId);
             }
         }
-
         Page<User> userPage = new Page<>(page, size);
         return baseMapper.selectPage(userPage, wrapper);
     }
 
     @Override
-    public String login(Map<String, String> loginMap) {
-        String mobile = loginMap.get("mobile");
-        String password = loginMap.get("password");
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<User>().eq(User::getMobile, mobile);
-        User user = userService.getOne(wrapper);
-        if (null == user || !user.getPassword().equals(password)) {
-            throw new BizException(ResultCode.MOBILEORPASSWORDERROR);
-        } else {
-            //登录成功
-            String token = JwtUtil.createJwt(user.getId(), user.getUsername(), null);
-            return token;
-        }
-    }
-
-    @Override
     public ProfileResult getUserProfile() {
         try {
-            String userId = LoginUserContext.getCurrentUser().getUserId();
+            String userId = SecurityUtils.getUserId();
             User user = userService.getById(userId);
             List<Permission> permissionList = baseMapper.getUserPerms(userId);
             return new ProfileResult(user, permissionList);

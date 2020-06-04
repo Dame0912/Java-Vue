@@ -2,12 +2,12 @@ package com.dame.cn.controller.co;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.Department;
 import com.dame.cn.beans.response.Result;
 import com.dame.cn.beans.response.ResultCode;
 import com.dame.cn.beans.vo.DeptListResult;
 import com.dame.cn.beans.vo.DeptWithChildItem;
+import com.dame.cn.config.security.utils.SecurityUtils;
 import com.dame.cn.service.co.DepartmentService;
 import com.dame.cn.utils.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class DepartmentController {
         if (StringUtils.isEmpty(department.getPid())) {
             department.setPid("0");
         }
-        department.setCreator(LoginUserContext.getCurrentUser().getUsername());
+        department.setCreator(SecurityUtils.getUserName());
         departmentService.save(department);
         return new Result(ResultCode.SUCCESS);
     }
@@ -65,7 +65,7 @@ public class DepartmentController {
     public Result update(@PathVariable("id") String id, @RequestBody Department department) {
         System.out.println("=========" + JSON.toJSONString(department));
         department.setId(id);
-        department.setEditor(LoginUserContext.getCurrentUser().getUsername());
+        department.setEditor(SecurityUtils.getUserName());
         departmentService.updateById(department);
         return new Result(ResultCode.SUCCESS);
     }

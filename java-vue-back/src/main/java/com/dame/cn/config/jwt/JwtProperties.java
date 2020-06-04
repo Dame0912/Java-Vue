@@ -23,11 +23,6 @@ public class JwtProperties {
     Integer refreshCheckTime;
 
     /**
-     * Shiro缓存有效期，单位分钟
-     */
-    Integer shiroCacheExpireTime;
-
-    /**
      * token加密密钥
      */
     String secretKey;

@@ -3,15 +3,16 @@ package com.dame.cn.controller.pe;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
-import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.User;
 import com.dame.cn.beans.response.BizException;
 import com.dame.cn.beans.response.Result;
 import com.dame.cn.beans.response.ResultCode;
 import com.dame.cn.beans.vo.ProfileResult;
+import com.dame.cn.config.security.utils.SecurityUtils;
 import com.dame.cn.service.pe.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -32,15 +33,8 @@ import java.util.Map;
 public class LoginController {
     @Autowired
     private UserService userService;
-
-    /**
-     * 登陆
-     */
-    @PostMapping(value = "/login")
-    public Result login(@RequestBody Map<String, String> loginMap) {
-        String token = userService.login(loginMap);
-        return new Result(ResultCode.SUCCESS, token);
-    }
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     /**
      * 用户登录成功之后，获取用户信息，角色，权限
@@ -57,17 +51,12 @@ public class LoginController {
         return new Result(ResultCode.SUCCESS, profileResult);
     }
 
-    @PostMapping("/logout")
-    public Result logout() {
-        return new Result(ResultCode.SUCCESS);
-    }
-
     /**
      * 获取个人信息
      */
     @PostMapping(value = "/profile")
     public Result getProfileInfo() {
-        String userId = LoginUserContext.getCurrentUser().getUserId();
+        String userId = SecurityUtils.getUserId();
         User user = userService.getById(userId);
         user.setPassword("******");
         Map<String, Object> beanMap = BeanUtil.beanToMap(user);
@@ -80,17 +69,17 @@ public class LoginController {
      */
     @PutMapping(value = "/edit/pwd")
     public Result editPassWord(@RequestBody Map<String, Object> map) {
-        String userId = LoginUserContext.getCurrentUser().getUserId();
+        String userId = SecurityUtils.getUserId();
         // 原密码
         User user = userService.getById(userId);
-        if(null == user || !user.getPassword().equals(MapUtil.get(map,"originPwd",String.class))){
+        if (null == user || !passwordEncoder.matches(MapUtil.getStr(map, "originPwd"), user.getPassword())) {
             throw new BizException(ResultCode.PWD_ERROR);
         }
-        user.setPassword(MapUtil.get(map,"newPwd",String.class));
+        user.setPassword(passwordEncoder.encode(MapUtil.getStr(map, "newPwd")));
         user.setLastPwdModifiedTime(new Date());
         userService.updateById(user);
-        // 新密码
         return new Result(ResultCode.SUCCESS);
     }
+
 }
 

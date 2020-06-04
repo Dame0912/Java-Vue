@@ -1,6 +1,7 @@
 package com.dame.cn.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.dame.cn.beans.dto.SysUser;
 import com.dame.cn.beans.entities.Permission;
 import com.dame.cn.beans.entities.User;
 
@@ -17,7 +18,12 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<User> {
 
     /**
-     * 查询用户 权限 列表
+     * 查询用户 所有权限 列表
      */
     List<Permission> getUserPerms(String userId);
+
+    /**
+     * 查询用户 权限 列表
+     */
+    SysUser getUserAndRP(String mobile);
 }

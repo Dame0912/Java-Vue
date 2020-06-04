@@ -4,12 +4,10 @@ package com.dame.cn.handle;
 import com.dame.cn.beans.response.BizException;
 import com.dame.cn.beans.response.Result;
 import com.dame.cn.beans.response.ResultCode;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 自定义的公共异常处理器
@@ -19,18 +17,23 @@ import javax.servlet.http.HttpServletResponse;
 @ControllerAdvice
 public class BaseExceptionHandler {
 
+    @ExceptionHandler(value = BizException.class)
+    @ResponseBody
+    public Result exception(BizException e) {
+        return new Result(e.getResultCode());
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    @ResponseBody
+    public Result exception(AccessDeniedException e) {
+        return new Result(ResultCode.UNAUTHORISE);
+    }
+
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public Result error(HttpServletRequest request, HttpServletResponse response, Exception e) {
+    public Result exception(Exception e) {
         e.printStackTrace();
-        if (e.getClass() == BizException.class) {
-            //类型转型
-            BizException ce = (BizException) e;
-            Result result = new Result(ce.getResultCode());
-            return result;
-        } else {
-            Result result = new Result(ResultCode.SERVER_ERROR);
-            return result;
-        }
+        return new Result(ResultCode.SERVER_ERROR);
     }
+
 }

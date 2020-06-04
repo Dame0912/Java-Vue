@@ -5,12 +5,12 @@ import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.Role;
 import com.dame.cn.beans.entities.RolePermission;
 import com.dame.cn.beans.response.PageResult;
 import com.dame.cn.beans.response.Result;
 import com.dame.cn.beans.response.ResultCode;
+import com.dame.cn.config.security.utils.SecurityUtils;
 import com.dame.cn.service.pe.RolePermissionService;
 import com.dame.cn.service.pe.RoleService;
 import com.dame.cn.utils.IdWorker;
@@ -77,7 +77,7 @@ public class RoleController {
     @PostMapping(value = "/save")
     public Result add(@RequestBody Role role) {
         role.setId(String.valueOf(idWorker.nextId()));
-        role.setCreator(LoginUserContext.getCurrentUser().getUsername());
+        role.setCreator(SecurityUtils.getUserName());
         roleService.save(role);
         return Result.SUCCESS();
     }
@@ -88,7 +88,7 @@ public class RoleController {
     @PutMapping(value = "/update/{id}")
     public Result update(@PathVariable(name = "id") String id, @RequestBody Role role) {
         role.setId(id);
-        role.setEditor(LoginUserContext.getCurrentUser().getUsername());
+        role.setEditor(SecurityUtils.getUserName());
         roleService.updateById(role);
         return Result.SUCCESS();
     }

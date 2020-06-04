@@ -24,11 +24,6 @@ public interface UserService extends IService<User> {
     IPage<User> findAll(Map map, int page, int size);
 
     /**
-     * 用户登陆
-     */
-    String login(Map<String,String> loginMap);
-
-    /**
      * 获取用户基本信息，以及权限信息（菜单，按钮）
      * @return 基本信息封装
      */

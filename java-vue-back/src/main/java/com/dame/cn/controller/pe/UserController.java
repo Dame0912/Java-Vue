@@ -4,17 +4,19 @@ package com.dame.cn.controller.pe;
 import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.dame.cn.beans.dto.LoginUserContext;
 import com.dame.cn.beans.entities.User;
 import com.dame.cn.beans.entities.UserRole;
 import com.dame.cn.beans.response.PageResult;
 import com.dame.cn.beans.response.Result;
 import com.dame.cn.beans.response.ResultCode;
+import com.dame.cn.config.security.utils.SecurityUtils;
 import com.dame.cn.service.pe.UserRoleService;
 import com.dame.cn.service.pe.UserService;
 import com.dame.cn.utils.IdWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -42,15 +44,18 @@ public class UserController {
     private UserRoleService userRoleService;
     @Autowired
     private IdWorker idWorker;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
 
     /**
      * 分页查询员工集合
      */
+    @PreAuthorize("hasAuthority('settings-user-findall')")
     @GetMapping(value = "/list")
     public Result findAllPage(@RequestParam Map<String, Object> map,
-                          @RequestParam(name = "page", defaultValue = "1") int page,
-                          @RequestParam(name = "size", defaultValue = "10") int size) {
+                              @RequestParam(name = "page", defaultValue = "1") int page,
+                              @RequestParam(name = "size", defaultValue = "10") int size) {
         IPage<User> userIPage = userService.findAll(map, page, size);
         PageResult<User> pageResult = new PageResult<>(userIPage.getTotal(), userIPage.getRecords());
         return new Result(ResultCode.SUCCESS, pageResult);
@@ -59,6 +64,7 @@ public class UserController {
     /**
      * 根据ID查询user
      */
+    @PreAuthorize("hasAuthority('settings-user-findById')")
     @GetMapping(value = "/find/{id}")
     public Result findById(@PathVariable("id") String id) {
         User user = userService.getById(id);
@@ -69,14 +75,13 @@ public class UserController {
     /**
      * 保存user
      */
+    @PreAuthorize("hasAuthority('settings-user-save')")
     @PostMapping(value = "/save")
     public Result save(@RequestBody User user) {
         //user.setLevel("user");
         user.setId(String.valueOf(idWorker.nextId()));
-        user.setCreator(LoginUserContext.getCurrentUser().getUsername());
-
-        // 密码处理 todo
-
+        user.setCreator(SecurityUtils.getUserName());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.save(user);
         return new Result(ResultCode.SUCCESS);
     }
@@ -84,10 +89,11 @@ public class UserController {
     /**
      * 修改User
      */
+    @PreAuthorize("hasAuthority('settings-user-update')")
     @PutMapping(value = "/update/{id}")
     public Result update(@PathVariable("id") String id, @RequestBody User user) {
         user.setId(id);
-        user.setEditor(LoginUserContext.getCurrentUser().getUsername());
+        user.setEditor(SecurityUtils.getUserName());
         user.setPassword(null);
         // 密码处理
         userService.updateById(user);
@@ -97,6 +103,7 @@ public class UserController {
     /**
      * 根据id删除
      */
+    @PreAuthorize("hasAuthority('settings-user-remove')")
     @DeleteMapping(value = "/delete/{id}")
     public Result delete(@PathVariable(value = "id") String id) {
         userService.removeById(id);
@@ -106,6 +113,7 @@ public class UserController {
     /**
      * 根据用户Id查询角色
      */
+    @PreAuthorize("hasAuthority('settings-user-findUserRole')")
     @GetMapping(value = "/role/{id}")
     public Result findUserRole(@PathVariable("id") String userId) {
         LambdaQueryWrapper<UserRole> wrapper = new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, userId);
@@ -116,6 +124,7 @@ public class UserController {
     /**
      * 给用户分配角色
      */
+    @PreAuthorize("hasAuthority('settings-user-assignRoles')")
     @PutMapping(value = "/assign/roles")
     public Result assign(@RequestBody Map<String, Object> map) {
         //1.获取被分配的用户id
@@ -136,7 +145,7 @@ public class UserController {
      * 查询全部员工
      */
     @GetMapping(value = "/all")
-    public Result getAllUser(){
+    public Result getAllUser() {
         return new Result(ResultCode.SUCCESS, userService.list());
     }
 

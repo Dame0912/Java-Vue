@@ -1,12 +1,12 @@
 package com.dame.cn.config;
 
-import com.dame.cn.config.web.filter.JwtTokenFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import com.dame.cn.beans.consts.JwtTokenConst;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -17,50 +17,32 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-
-    /**
-     * 注册拦截器
-     */
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//    }
-
-    /**
-     * 注册监听器
-     */
-//    @Bean
-//    public ServletListenerRegistrationBean servletListenerRegistrationBean() {
-//        ServletListenerRegistrationBean srb = new ServletListenerRegistrationBean();
-//        return srb;
-//    }
-
-    /**
-     * 注册过滤器
-     */
-    @Bean
-    public FilterRegistrationBean jwtTokenFilter() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        filterRegistrationBean.setFilter(new JwtTokenFilter());
-        filterRegistrationBean.addUrlPatterns("/*");
-        filterRegistrationBean.setOrder(1);
-        return filterRegistrationBean;
-    }
-
     /**
      * 注册 跨域过滤器
      */
     @Bean
-    public FilterRegistrationBean corsFilter() {
+    public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(0);
-        return bean;
+        source.registerCorsConfiguration("/**", buildConfig());
+        return new CorsFilter(source);
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowCredentials(true)
+                .allowedMethods("GET", "POST", "DELETE", "PUT")
+                .maxAge(3600);
+    }
+
+    private CorsConfiguration buildConfig() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.addExposedHeader(JwtTokenConst.TOKEN_KEY);
+        return corsConfiguration;
     }
 
 }
