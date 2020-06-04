@@ -34,8 +34,8 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ mobile: username.trim(), password: password }).then(response => {
-        commit('SET_TOKEN', response.data)
-        setToken(response.data)
+        //commit('SET_TOKEN', response.data)
+        //setToken(response.data)
         resolve()
       }).catch(error => {
         reject(error)

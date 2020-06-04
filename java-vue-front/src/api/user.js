@@ -82,9 +82,9 @@ export function editPassWord(data) {
 
 export function login(data) {
   return request({
-    url: `/sys/user/login`,
+    url: `/login`,
     method: 'post',
-    data
+    params: data
   })
 }
 
@@ -97,7 +97,7 @@ export function getInfo() {
 
 export function logout() {
   return request({
-    url: '/sys/user/logout',
+    url: '/logout',
     method: 'post'
   })
 }

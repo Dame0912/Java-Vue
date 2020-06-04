@@ -37,7 +37,7 @@ router.beforeEach(async(to, from, next) => {
           next({ ...to, replace: true })
         } catch (error) {
           await store.dispatch('user/resetToken')
-          Message.error('验证失败, 请重新登录')
+          //Message.error('验证失败, 请重新登录')
           next(`/login?redirect=${to.path}`)
         }
       }
