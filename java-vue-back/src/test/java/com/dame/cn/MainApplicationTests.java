@@ -5,7 +5,9 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.dame.cn.beans.entities.Permission;
+import com.dame.cn.config.jwt.JwtUtil;
 import com.dame.cn.service.pe.PermissionService;
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +36,20 @@ class MainApplicationTests {
         Map<String, List<Permission>> apiPermMap = apiPermList.stream().collect(Collectors.groupingBy(Permission::getPid));
         HashMap<Object, Object> resultMap = MapUtil.of(new Object[][]{{"permList", permList}, {"apiPermMap", apiPermMap}});
         System.out.println(JSON.toJSONString(resultMap));
+    }
+
+    @Test
+    void testJwtRsa(){
+        Long expire = System.currentTimeMillis() + 2*60*1000;
+        HashMap<String, Object> map = MapUtil.of("k1", "v1");
+        String token = JwtUtil.createJwt("1", "zhangsan", expire, map);
+        System.out.println(token);
+        System.out.println("=============");
+        Claims claims = JwtUtil.parseJwt(token);
+        String id = claims.getId();
+        String subject = claims.getSubject();
+        String k1 = claims.get("k1", String.class);
+        System.out.println(id + "--" + subject + "--" + k1);
     }
 
 

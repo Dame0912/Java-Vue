@@ -23,7 +23,22 @@ public class JwtProperties {
     Integer refreshCheckTime;
 
     /**
-     * token加密密钥
+     * 私钥路径
      */
-    String secretKey;
+    String privateKeyPath;
+
+    /**
+     * 公钥路径
+     */
+    String publicKeyPath;
+
+    /**
+     * 生成密钥的密文(盐)
+     */
+    String keySecret;
+
+    /**
+     * 生成秘钥大小
+     */
+    Integer keySize;
 }

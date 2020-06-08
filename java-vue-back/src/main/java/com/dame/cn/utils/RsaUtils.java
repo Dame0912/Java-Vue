@@ -1,38 +1,18 @@
-# 4.0.1 分支
+package com.dame.cn.utils;
 
-### 一、说明
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.io.FileUtil;
+import lombok.extern.slf4j.Slf4j;
 
-> **基于 分支4.0.0 改造**
+import java.security.*;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
-
-
-### 二、新增功能
-
-> **1、引入RSA, 完成Token的生成和解密**。
->
-> **2、单点登录**
->
-> > 在认证服务中，使用私钥加密Token，在其他资源服务中使用公钥解密Token，如果能够解密成功，证明用户状态为登录，否则为非登录状态。
-
-
-
-### 三、启动
-
-> **1、导入 java-vue.sql**
->
-> **2、启动本地 Redis**
->
-> **3、运行 GenerateRsaKey 类，生成公私钥**
-
-
-
-### 四、后台
-
-#### 1、RsaUtils
-
-> 生成公私钥，以及读取文件的公私钥
-
-```java
+/**
+ * @author LYQ
+ * @description RSA工具类
+ * @since 2020-06-08
+ **/
 @Slf4j
 public class RsaUtils {
     private static final int DEFAULT_KEY_SIZE = 2048;
@@ -90,79 +70,3 @@ public class RsaUtils {
         log.info("生成公私钥结束");
     }
 }
-```
-
-
-
-#### 2、JwtUtil
-
-> 使用私钥，生成 Token
->
-> 使用公钥，解析 Token
-
-```java
-/**
- * 使用RSA私钥，生成jwt的token
- *
- * @param id   userId
- * @param name username
- * @param map  其它需要保存的
- * @return token
- */
-public static String createJwt(String id, String name, Long expire, Map map) {
-	try {
-		// 1.设置失效时间
-		long exp = expire;
-		// 2.私钥
-        String privatePath = jwtUtil.jwtProperties.privateKeyPath;
-		PrivateKey privateKey = RsaUtils.getPrivateKey(privatePath);
-		// 3.创建jwtBuilder，并用私钥加密
-		JwtBuilder jwtBuilder = Jwts.builder().setId(id).setSubject(name)
-				.setIssuedAt(new Date())
-            	 // SignatureAlgorithm 需要是RSA的模式
-				.signWith(SignatureAlgorithm.RS256, privateKey) 
-				.setExpiration(new Date(exp));
-		// 4.根据map设置claims
-		if (MapUtil.isNotEmpty(map)) {
-			for (Map.Entry<String, Object> entry : map.entrySet()) {
-				jwtBuilder.claim(entry.getKey(), entry.getValue());
-			}
-		}
-		// 5.创建token
-		return jwtBuilder.compact();
-	} catch (Exception e) {
-		e.printStackTrace();
-		throw new BizException(ResultCode.TOKENERROR);
-	}
-}
-
-/**
- * 使用RSA公钥，解析token字符串获取clamis
- */
-public static Claims parseJwt(String token) {
-	try {
-		// 公钥
-        String publicPath = jwtUtil.jwtProperties.publicKeyPath;
-		PublicKey publicKey = RsaUtils.getPublicKey(publicPath);
-		// 公钥解密
-		return Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token).getBody();
-	} catch (Exception e) {
-		throw new BizException(ResultCode.UNAUTH_EXPIRE);
-	}
-}
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
